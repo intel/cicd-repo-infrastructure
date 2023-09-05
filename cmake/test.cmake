@@ -18,12 +18,6 @@ set(MEMORYCHECK_COMMAND_OPTIONS
 configure_file(${CMAKE_ROOT}/Modules/DartConfiguration.tcl.in
                ${PROJECT_BINARY_DIR}/DartConfiguration.tcl)
 
-if(DEFINED ENV{CXX_STANDARD})
-    set(CMAKE_CXX_STANDARD $ENV{CXX_STANDARD})
-else()
-    set(CMAKE_CXX_STANDARD 17)
-endif()
-
 macro(get_catch2)
     if(NOT TARGET Catch2::Catch2WithMain)
         add_versioned_package("gh:catchorg/Catch2@3.4.0")
