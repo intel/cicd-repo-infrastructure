@@ -9,6 +9,10 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
     )
 endif()
 
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 20)
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
     CACHE BOOL "Export compile commands to compile_commands.json." FORCE)

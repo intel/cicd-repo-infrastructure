@@ -11,6 +11,9 @@ on:
 env:
   DEBIAN_FRONTEND: noninteractive
   CMAKE_GENERATOR: Ninja
+  DEFAULT_CXX_STANDARD: 20
+  DEFAULT_LLVM_VERSION: 16
+  DEFAULT_GCC_VERSION: 12
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -93,9 +96,7 @@ jobs:
         env:
           CC: ${{matrix.toolchain_root}}/bin/${{matrix.cc}}
           CXX: ${{matrix.toolchain_root}}/bin/${{matrix.cxx}}
-          CXX_STANDARD: ${{matrix.cxx_standard}}
-          CXX_STDLIB: ${{matrix.stdlib}}
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/toolchains/${{matrix.compiler}}.cmake -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_STANDARD=${{matrix.cxx_standard}} -DCMAKE_CXX_FLAGS_INIT="-stdlib=${{matrix.stdlib}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
 
       - name: Build Unit Tests
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} -v -t build_unit_tests
@@ -111,8 +112,8 @@ jobs:
 
       - name: Install build tools
         run: |
-          wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh 16
-          sudo apt install -y ninja-build clang-tidy-16 clang-format-16
+          wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.DEFAULT_LLVM_VERSION}}
+          sudo apt install -y ninja-build clang-tidy-${{env.DEFAULT_LLVM_VERSION}} clang-format-${{env.DEFAULT_LLVM_VERSION}}
 
       - name: Install cmake-format
         run: |
@@ -121,10 +122,9 @@ jobs:
 
       - name: Configure CMake
         env:
-          CC: "/usr/lib/llvm-16/bin/clang"
-          CXX: "/usr/lib/llvm-16/bin/clang++"
-          CXX_STANDARD: 20
-        run: cmake -B ${{github.workspace}}/build
+          CC: "/usr/lib/llvm-${{env.DEFAULT_LLVM_VERSION}}/bin/clang"
+          CXX: "/usr/lib/llvm-${{env.DEFAULT_LLVM_VERSION}}/bin/clang++"
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_STANDARD=${{env.DEFAULT_CXX_STANDARD}}
 
       - name: Run quality checks
         run: cmake --build ${{github.workspace}}/build -t quality
@@ -141,16 +141,15 @@ jobs:
 
       - name: Install build tools
         run: |
-          wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh 16
+          wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.DEFAULT_LLVM_VERSION}}
           sudo apt install -y ninja-build
 
       - name: Configure CMake
         env:
-          CC: "/usr/lib/llvm-16/bin/clang"
-          CXX: "/usr/lib/llvm-16/bin/clang++"
-          CXX_STANDARD: 20
+          CC: "/usr/lib/llvm-${{env.DEFAULT_LLVM_VERSION}}/bin/clang"
+          CXX: "/usr/lib/llvm-${{env.DEFAULT_LLVM_VERSION}}/bin/clang++"
           SANITIZERS: ${{matrix.sanitizer}}
-        run: cmake -B ${{github.workspace}}/build
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_STANDARD=${{env.DEFAULT_CXX_STANDARD}}
 
       - name: Build Unit Tests
         run: cmake --build ${{github.workspace}}/build -t unit_tests
@@ -165,10 +164,9 @@ jobs:
 
       - name: Configure CMake
         env:
-          CC: "/usr/bin/gcc-12"
-          CXX: "/usr/bin/g++-12"
-          CXX_STANDARD: 20
-        run: cmake -B ${{github.workspace}}/build
+          CC: "/usr/bin/gcc-${{env.DEFAULT_GCC_VERSION}}"
+          CXX: "/usr/bin/g++-${{env.DEFAULT_GCC_VERSION}}"
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_CXX_STANDARD=${{env.DEFAULT_CXX_STANDARD}}
 
       - name: Build Unit Tests
         run: cmake --build ${{github.workspace}}/build -t build_unit_tests
