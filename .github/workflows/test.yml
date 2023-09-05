@@ -1,0 +1,73 @@
+name: Usage Test
+
+on:
+  workflow_dispatch:
+  merge_group:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DEBIAN_FRONTEND: noninteractive
+  CMAKE_GENERATOR: Ninja
+  TARGET_LLVM_VERSION: 16
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install build tools
+        run: |
+          wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.TARGET_LLVM_VERSION}}
+          sudo apt install -y ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
+
+      - name: Install asciidoctor
+        run: |
+          sudo apt update && sudo apt install -y asciidoctor
+          sudo gem install asciidoctor asciidoctor-diagram rouge
+
+      - name: Install cmake and cmake-format
+        run: |
+          pip3 install --upgrade pip
+          pip3 install cmake pyyaml cmake-format
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Configure cmake for lib
+        env:
+          CC: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang"
+          CXX: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang++"
+        working-directory: ${{github.workspace}}/test/library
+        run: cmake -Bbuild
+
+      - name: Check lib quality
+        working-directory: ${{github.workspace}}/test/library
+        run: cmake --build build -t quality
+
+      - name: Build lib docs
+        working-directory: ${{github.workspace}}/test/library
+        run: cmake --build build -t docs
+
+      - name: Configure cmake for app
+        env:
+          CC: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang"
+          CXX: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang++"
+        working-directory: ${{github.workspace}}/test/application
+        run: cmake -Bbuild
+
+      - name: Build app and run tests
+        working-directory: ${{github.workspace}}/test/application
+        run: |
+          cmake --build build -t build_unit_tests
+          ctest --test-dir build
+
+      - name: Verify app setup
+        working-directory: ${{github.workspace}}/test
+        run: ./verify_links.sh

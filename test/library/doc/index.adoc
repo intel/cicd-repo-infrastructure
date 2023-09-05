@@ -1,0 +1,12 @@
+= Test library
+Ben Deane <ben.deane@intel.com>
+:revnumber: 0.1
+:revdate: May 04, 2023
+:source-highlighter: rouge
+:rouge-style: base16.solarized
+:source-language: c++
+:toc: left
+
+== Introduction
+
+This is a test library that exercises the infrastructure.
