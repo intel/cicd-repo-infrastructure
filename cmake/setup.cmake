@@ -51,9 +51,12 @@ function(make_symlink_in_project_dir FILENAME)
 endfunction()
 
 function(compare_and_update_file FILENAME SRC_DIR DST_DIR)
+    set(options FORCE)
+    cmake_parse_arguments(UPDATE "${options}" "" "" ${ARGN})
+
     if(NOT EXISTS "${DST_DIR}/${FILENAME}")
         file(COPY "${SRC_DIR}/${FILENAME}" DESTINATION "${DST_DIR}")
-    else()
+    elseif(UPDATE_FORCE)
         execute_process(
             COMMAND ${CMAKE_COMMAND} -E compare_files "${SRC_DIR}/${FILENAME}"
                     "${DST_DIR}/${FILENAME}" RESULT_VARIABLE cmp)
@@ -63,6 +66,8 @@ function(compare_and_update_file FILENAME SRC_DIR DST_DIR)
             )
             file(COPY "${SRC_DIR}/${FILENAME}" DESTINATION "${DST_DIR}")
         endif()
+    else()
+        message("${DST_DIR}/${FILENAME} exists, not updating")
     endif()
 endfunction()
 
@@ -84,8 +89,8 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     compare_and_update_file(
         asciidoctor-ghpages.yml
         "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows"
-        "${CMAKE_SOURCE_DIR}/.github/workflows")
+        "${CMAKE_SOURCE_DIR}/.github/workflows" FORCE)
     compare_and_update_file(
         dependabot.yml "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github"
-        "${CMAKE_SOURCE_DIR}/.github")
+        "${CMAKE_SOURCE_DIR}/.github" FORCE)
 endif()

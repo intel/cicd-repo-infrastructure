@@ -169,8 +169,8 @@ endmacro()
 function(add_feature_test_target name)
     set(singleValueArgs FEATURE)
     set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
-    cmake_parse_arguments(FEAT "${options}" "${singleValueArgs}"
-                          "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(FEAT "" "${singleValueArgs}" "${multiValueArgs}"
+                          ${ARGN})
 
     add_executable(${name} ${FEAT_FILES})
     target_include_directories(${name} PRIVATE ${FEAT_INCLUDE_DIRECTORIES})
