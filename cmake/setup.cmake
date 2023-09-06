@@ -33,6 +33,10 @@ function(make_gitignore)
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.gitignore")
         execute_process(COMMAND ${CMAKE_COMMAND} -E echo ${GITIGNORE_CONTENTS}
                         OUTPUT_FILE "${CMAKE_SOURCE_DIR}/.gitignore")
+    else()
+        message(
+            "${CMAKE_SOURCE_DIR}/.gitignore exists, not overwriting -- this may result in git taking notice of symlinks"
+        )
     endif()
 endfunction()
 
@@ -43,6 +47,22 @@ function(make_symlink_in_project_dir FILENAME)
                 ${CMAKE_COMMAND} -E create_symlink
                 "${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}"
                 "${CMAKE_SOURCE_DIR}/${FILENAME}")
+    endif()
+endfunction()
+
+function(compare_and_update_file FILENAME SRC_DIR DST_DIR)
+    if(NOT EXISTS "${DST_DIR}/${FILENAME}")
+        file(COPY "${SRC_DIR}/${FILENAME}" DESTINATION "${DST_DIR}")
+    else()
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E compare_files "${SRC_DIR}/${FILENAME}"
+                    "${DST_DIR}/${FILENAME}" RESULT_VARIABLE cmp)
+        if(NOT cmp EQUAL 0)
+            message(
+                "${DST_DIR}/${FILENAME} is different from ${SRC_DIR}/${FILENAME}, updating"
+            )
+            file(COPY "${SRC_DIR}/${FILENAME}" DESTINATION "${DST_DIR}")
+        endif()
     endif()
 endfunction()
 
@@ -57,9 +77,15 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
     execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
                             "${CMAKE_SOURCE_DIR}/.github/workflows")
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows/unit_tests.yml"
-         DESTINATION "${CMAKE_SOURCE_DIR}/.github/workflows")
-    file(
-        COPY "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows/asciidoctor-ghpages.yml"
-        DESTINATION "${CMAKE_SOURCE_DIR}/.github/workflows")
+
+    compare_and_update_file(
+        unit_tests.yml "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows"
+        "${CMAKE_SOURCE_DIR}/.github/workflows")
+    compare_and_update_file(
+        asciidoctor-ghpages.yml
+        "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows"
+        "${CMAKE_SOURCE_DIR}/.github/workflows")
+    compare_and_update_file(
+        dependabot.yml "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github"
+        "${CMAKE_SOURCE_DIR}/.github")
 endif()
