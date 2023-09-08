@@ -11,5 +11,6 @@ target_include_directories(test_lib INTERFACE include)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     add_docs(docs)
-    clang_tidy_interface(TARGET test_lib EXCLUDE_DIRS include/exclude)
+    clang_tidy_interface(TARGET test_lib EXCLUDE_DIRS include/exclude
+                         EXCLUDE_FILES include/test_lib/exclude.hpp)
 endif()
