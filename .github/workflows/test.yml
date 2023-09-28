@@ -11,7 +11,7 @@ on:
 env:
   DEBIAN_FRONTEND: noninteractive
   CMAKE_GENERATOR: Ninja
-  TARGET_LLVM_VERSION: 16
+  TARGET_LLVM_VERSION: 17
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -19,12 +19,12 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: intel-ubuntu-22.04
     steps:
       - name: Install build tools
         run: |
           wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.TARGET_LLVM_VERSION}}
-          sudo apt install -y ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
+          sudo apt install -y python3-pip ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
 
       - name: Install asciidoctor
         run: |
@@ -33,8 +33,8 @@ jobs:
 
       - name: Install cmake and cmake-format
         run: |
-          pip3 install --upgrade pip
-          pip3 install cmake pyyaml cmake-format
+          sudo pip3 install --upgrade pip
+          sudo pip3 install cmake pyyaml cmake-format
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
       - name: Checkout source
