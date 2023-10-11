@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: intel-ubuntu-22.04
+    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-22.04
     steps:
       - name: Install build tools
         run: |
