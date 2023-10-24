@@ -13,3 +13,5 @@ add_feature_test(
     test.feature
     LIBRARIES
     warnings)
+
+add_compile_fail_test(compile_fail_test.cpp LIBRARIES warnings)

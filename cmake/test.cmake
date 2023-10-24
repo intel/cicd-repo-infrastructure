@@ -220,10 +220,17 @@ macro(add_feature_test)
 endmacro()
 
 function(add_compile_fail_test test_file)
+    set(multiValueArgs INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
+    cmake_parse_arguments(CF "" "" "${multiValueArgs}" ${ARGN})
+
     string(REPLACE "/" "_" test_name "${test_file}")
     string(PREPEND test_name "EXPECT_FAIL.")
     add_executable(${test_name} EXCLUDE_FROM_ALL ${test_file})
-    target_link_libraries(${test_name} PRIVATE safe_arithmetic)
+
+    target_include_directories(${test_name} PRIVATE ${CF_INCLUDE_DIRECTORIES})
+    target_link_libraries(${test_name} PRIVATE ${CF_LIBRARIES})
+    target_link_libraries_system(${test_name} PRIVATE ${CF_SYSTEM_LIBRARIES})
+
     add_test(NAME ${test_name}
              COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target
                      ${test_name})
