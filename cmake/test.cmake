@@ -40,7 +40,7 @@ macro(get_gunit)
             NAME
             gunit
             GIT_TAG
-            v1.13.0
+            v1.14.0
             GITHUB_REPOSITORY
             cpp-testing/GUnit
             DOWNLOAD_ONLY
