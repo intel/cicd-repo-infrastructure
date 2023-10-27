@@ -40,7 +40,7 @@ macro(get_gunit)
             NAME
             gunit
             GIT_TAG
-            v1.13.0
+            v1.14.0
             GITHUB_REPOSITORY
             cpp-testing/GUnit
             DOWNLOAD_ONLY
@@ -231,10 +231,18 @@ function(add_compile_fail_test test_file)
     target_link_libraries(${test_name} PRIVATE ${CF_LIBRARIES})
     target_link_libraries_system(${test_name} PRIVATE ${CF_SYSTEM_LIBRARIES})
 
+    file(STRINGS ${test_file} pattern REGEX "// EXPECT: ")
+    if(NOT pattern)
+        set(pattern "(static_assert)|(static assertion failed)")
+    else()
+        string(REGEX REPLACE ".*// EXPECT: " "" pattern ${pattern})
+    endif()
+    message(
+        STATUS "EXPECTING ${pattern} in compilation failure for ${test_file}.")
+
     add_test(NAME ${test_name}
              COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target
                      ${test_name})
-    set_tests_properties(
-        ${test_name} PROPERTIES PASS_REGULAR_EXPRESSION
-                                "(static_assert)|(static assertion failed)")
+    set_tests_properties(${test_name} PROPERTIES PASS_REGULAR_EXPRESSION
+                                                 "${pattern}")
 endfunction()

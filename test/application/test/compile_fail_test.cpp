@@ -1,5 +1,5 @@
-template <auto I> struct S {
-    static_assert(I != 0);
-};
+// EXPECT: (incomplete type)|(undefined template)
 
-int main() { S<0> s{}; }
+template <typename...> struct S;
+
+int main() { S<float> s{}; }
