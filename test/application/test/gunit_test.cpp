@@ -47,6 +47,6 @@ GTEST("gunit tests") {
     }
 }
 
-RC_GTEST_PROP(tests, rapidcheck_test, (int a, int b)) {
-    RC_ASSERT(a + b == b + a);
+RC_GTEST_PROP(tests, rapidcheck_test, (unsigned int a)) {
+    RC_ASSERT(a * 2u == a + a);
 }
