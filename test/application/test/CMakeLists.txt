@@ -15,3 +15,4 @@ add_feature_test(
     warnings)
 
 add_compile_fail_test(compile_fail_test.cpp LIBRARIES warnings)
+add_compile_fail_test(compile_fail_test_no_pattern.cpp LIBRARIES warnings)
