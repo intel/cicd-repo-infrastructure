@@ -2,12 +2,12 @@
 
 set -euo pipefail
 
-rm .clang-format
-rm .clang-tidy
-rm .cmake-format.yaml
-rm .gitignore
-rm CMakePresets.json
-rm toolchains
+rm -f .clang-format
+rm -f .clang-tidy
+rm -f .cmake-format.yaml
+rm -f .gitignore
+rm -f CMakePresets.json
+rm -f toolchains
 
 rm -rf build
 rm -rf .github
