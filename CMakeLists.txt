@@ -19,6 +19,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS
     ON
     CACHE BOOL "Export compile commands to compile_commands.json." FORCE)
 
+option(INFRA_PROVIDE_GITHUB_WORKFLOWS
+       "Provide unit_test and documentation workflows" ON)
+option(INFRA_PROVIDE_CLANG_FORMAT "Provide .clang-format file" ON)
+option(INFRA_PROVIDE_CLANG_TIDY "Provide .clang-tidy file" ON)
+option(INFRA_PROVIDE_CMAKE_FORMAT "Provide .cmake-format.yaml file" ON)
+option(INFRA_PROVIDE_PRESETS "Provide cmake presets and toolchains" ON)
+option(INFRA_PROVIDE_GITIGNORE "Add provided things to .gitignore" ON)
+option(INFRA_USE_SYMLINKS "Use symlinks to provide common files" ON)
+
 include(cmake/cpm_recipes.cmake)
 include(cmake/dependencies.cmake)
 include(cmake/libraries.cmake)

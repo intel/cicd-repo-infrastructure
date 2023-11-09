@@ -12,20 +12,30 @@ function(make_gitignore)
         "/.cache"
         "/.DS_Store")
 
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-format")
-        list(APPEND GITIGNORE_CONTENTS ".clang-format")
-    endif()
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-tidy")
-        list(APPEND GITIGNORE_CONTENTS ".clang-tidy")
-    endif()
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.cmake-format.yaml")
-        list(APPEND GITIGNORE_CONTENTS ".cmake-format.yaml")
-    endif()
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/CMakePresets.json")
-        list(APPEND GITIGNORE_CONTENTS "CMakePresets.json")
-    endif()
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/toolchains")
-        list(APPEND GITIGNORE_CONTENTS "/toolchains")
+    if(INFRA_USE_SYMLINKS)
+        if(INFRA_PROVIDE_CLANG_FORMAT)
+            if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-format")
+                list(APPEND GITIGNORE_CONTENTS ".clang-format")
+            endif()
+        endif()
+        if(INFRA_PROVIDE_CLANG_TIDY)
+            if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-tidy")
+                list(APPEND GITIGNORE_CONTENTS ".clang-tidy")
+            endif()
+        endif()
+        if(INFRA_PROVIDE_CMAKE_FORMAT)
+            if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.cmake-format.yaml")
+                list(APPEND GITIGNORE_CONTENTS ".cmake-format.yaml")
+            endif()
+        endif()
+        if(INFRA_PROVIDE_PRESETS)
+            if(NOT EXISTS "${CMAKE_SOURCE_DIR}/CMakePresets.json")
+                list(APPEND GITIGNORE_CONTENTS "CMakePresets.json")
+            endif()
+            if(NOT EXISTS "${CMAKE_SOURCE_DIR}/toolchains")
+                list(APPEND GITIGNORE_CONTENTS "/toolchains")
+            endif()
+        endif()
     endif()
 
     string(REPLACE ";" "\n" GITIGNORE_CONTENTS "${GITIGNORE_CONTENTS}")
@@ -40,11 +50,16 @@ function(make_gitignore)
     endif()
 endfunction()
 
-function(make_symlink_in_project_dir FILENAME)
+function(put_in_project_dir FILENAME)
+    if(INFRA_USE_SYMLINKS)
+        set(put_command "create_symlink")
+    else()
+        set(put_command "copy")
+    endif()
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${FILENAME}")
         execute_process(
             COMMAND
-                ${CMAKE_COMMAND} -E create_symlink
+                ${CMAKE_COMMAND} -E ${put_command}
                 "${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}"
                 "${CMAKE_SOURCE_DIR}/${FILENAME}")
     endif()
@@ -72,25 +87,37 @@ function(compare_and_update_file FILENAME SRC_DIR DST_DIR)
 endfunction()
 
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    make_gitignore()
+    if(INFRA_PROVIDE_GITIGNORE)
+        make_gitignore()
+    endif()
 
-    make_symlink_in_project_dir(".clang-format")
-    make_symlink_in_project_dir(".clang-tidy")
-    make_symlink_in_project_dir(".cmake-format.yaml")
-    make_symlink_in_project_dir("CMakePresets.json")
-    make_symlink_in_project_dir("toolchains")
+    if(INFRA_PROVIDE_CLANG_FORMAT)
+        put_in_project_dir(".clang-format")
+    endif()
+    if(INFRA_PROVIDE_CLANG_TIDY)
+        put_in_project_dir(".clang-tidy")
+    endif()
+    if(INFRA_PROVIDE_CMAKE_FORMAT)
+        put_in_project_dir(".cmake-format.yaml")
+    endif()
+    if(INFRA_PROVIDE_PRESETS)
+        put_in_project_dir("CMakePresets.json")
+        put_in_project_dir("toolchains")
+    endif()
 
-    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
-                            "${CMAKE_SOURCE_DIR}/.github/workflows")
+    if(INFRA_PROVIDE_GITHUB_WORKFLOWS)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
+                                "${CMAKE_SOURCE_DIR}/.github/workflows")
 
-    compare_and_update_file(
-        unit_tests.yml "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows"
-        "${CMAKE_SOURCE_DIR}/.github/workflows")
-    compare_and_update_file(
-        asciidoctor-ghpages.yml
-        "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows"
-        "${CMAKE_SOURCE_DIR}/.github/workflows" FORCE)
-    compare_and_update_file(
-        dependabot.yml "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github"
-        "${CMAKE_SOURCE_DIR}/.github" FORCE)
+        compare_and_update_file(
+            unit_tests.yml "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows"
+            "${CMAKE_SOURCE_DIR}/.github/workflows")
+        compare_and_update_file(
+            asciidoctor-ghpages.yml
+            "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github/workflows"
+            "${CMAKE_SOURCE_DIR}/.github/workflows" FORCE)
+        compare_and_update_file(
+            dependabot.yml "${CMAKE_CURRENT_SOURCE_DIR}/ci/.github"
+            "${CMAKE_SOURCE_DIR}/.github" FORCE)
+    endif()
 endif()
