@@ -1,0 +1,100 @@
+
+== Testing
+
+This repository provides several CMake functions to make defining tests easy.
+
+=== Defining unit tests
+
+[source,cmake]
+----
+add_unit_test(my_test CATCH2
+  FILES my_test.cpp
+  LIBRARIES my_lib)
+----
+
+`add_unit_test` is a basic function for defining unit tests. Three unit test
+framework options are supported (according to the given argument):
+
+- https://github.com/catchorg/catch2[`CATCH2`]
+- https://github.com/google/googletest[`GTEST`]
+- https://github.com/cpp-testing/gunit[`GUNIT`]
+
+https://github.com/emil-e/rapidcheck[RapidCheck] is also provided for
+property-based testing; it integrates with either Catch2 or GoogleTest (or
+GUnit, which is based on GoogleTest). See the RapidCheck documentation for how
+to use it with either of those frameworks.
+
+=== BDD feature tests
+
+GUnit also provides for BDD-style "feature tests", which define tests in a
+Cucumber/Gherkin syntax feature file, and define steps in the C++.
+
+[source,cmake]
+----
+add_feature_test(
+    my_feature_test
+    FILES
+    my_steps.cpp
+    FEATURE
+    my_test.feature
+    LIBRARIES
+    my_lib
+    warnings)
+----
+
+=== Compilation failure tests
+
+When writing compile-time code, it's often useful to check compilation failures
+to test that for example library users get a clear help message. To do that, use
+`add_compile_fail_test`:
+
+[source,cmake]
+----
+add_compile_fail_test(my_fail_test.cpp LIBRARIES my_lib)
+----
+
+Compilation failure tests consist of a single source file and are unrelated to
+testing frameworks. The source file can define what is expected as a message
+with a comment:
+
+[source,cpp]
+----
+// EXPECT: FLAGRANT SYSTEM ERROR
+----
+
+If no `EXPECT` comment is found, by default we will expect a `static_assert` to
+fire.
+
+NOTE: Compilation failure tests are not part of the `all` target, for obvious
+reasons. But they are set up as tests that are designed to fail; they can be run
+with the `test` target or by `ctest`.
+
+NOTE: Because `ctest` information is updated at CMake time, changing the
+`EXPECT` comment of a test requires re-running CMake to update what is expected.
+
+=== Sanitizers
+
+The `sanitizers` library works similarly to the `warnings` library, but provides
+compiler command-line options that enable various sanitizers.
+
+Which sanitizers are turned on is specified at CMake time by the environment
+variable `SANITIZERS`.
+
+[source,bash]
+----
+$ SANITIZERS=undefined cmake --preset=clang
+----
+
+When a sanitizer is set like this, any targets created with `add_unit_test` or
+`add_feature_test` will use the sanitizer flags. The
+xref:github.adoc#_unit_tests_workflow[unit_tests workflow] runs tests with
+(separately) the
+https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html[undefined behavior],
+https://clang.llvm.org/docs/AddressSanitizer.html[address] and
+https://clang.llvm.org/docs/ThreadSanitizer.html[thread] sanitizers.
+
+=== Valgrind
+
+CMake has built-in support for valgrind; using `ctest` with the `-T memcheck`
+option runs unit tests with valgrind. This is also done by the
+xref:github.adoc#_unit_tests_workflow[unit_tests workflow].

@@ -1,0 +1,59 @@
+
+== Github workflows
+
+When the `INFRA_PROVIDE_GITHUB_WORKFLOWS` option is `ON`, three files will be
+copied into the `.github` directory:
+
+- https://github.com/intel/cicd-repo-infrastructure/blob/main/ci/.github/workflows/unit_tests.yml[`.github/workflows/unit_tests.yml`]
+- https://github.com/intel/cicd-repo-infrastructure/blob/main/ci/.github/workflows/asciidoctor-ghpages.yml[`.github/workflows/asciidoctor-ghpages.yml`]
+- https://github.com/intel/cicd-repo-infrastructure/blob/main/.github/dependabot.yml[`.github/dependabot.yml`]
+
+=== Unit tests workflow
+
+The unit tests workflow provides a job matrix that builds the cartesian product
+of:
+
+- Clang 14 through 17
+- GCC 12 through 13
+- libstdc+​+ and libc+​+
+- C++20
+- Debug builds
+
+It also builds a xref:quality.adoc#_the_quality_target[quality check]; runs unit
+tests with xref:testing.adoc#_sanitizers[sanitizers]; and runs unit tests with
+xref:testing.adoc#_valgrind[valgrind].
+
+=== Documentation workflow
+
+This is a simple workflow that uses https://asciidoctor.org[AsciiDoctor] to
+build and publish documentation as Github Pages. Documentation source files are
+assumed to be in /docs; any static files are assumed to be in /docs/static. The
+documentation you are reading is authored with AsciiDoctor and published with
+this workflow.
+
+To set up documentation for a project, use the `add_docs` CMake function.
+
+[source,cmake]
+----
+add_docs(docs)
+----
+
+This will set up a CMake target called `docs` which builds the AsciiDoctor
+documentation found in the `docs` directory.
+
+NOTE: The relevant parts of `AsciiDoctor` must be installed on the system! This
+happens automatically with CI, but not for a local build.
+
+NOTE: Because constructing the docs target globs the files, an added file won't
+be included until CMake is re-run.
+
+In order to publish documentation successfully this way, your repository settings must
+allow
+https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow[publishing
+pages with a workflow].
+
+=== Dependabot
+
+https://github.com/dependabot[Dependabot] is a workflow that keeps dependencies
+up to date. It is chiefly useful with git submodule dependencies; not with
+dependencies pulled in by CPM.

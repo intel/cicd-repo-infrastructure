@@ -1,0 +1,21 @@
+
+== Libraries and warnings
+
+This repository provides an `INTERFACE` library called `warnings` that, when linked
+with, applies warnings to the code.
+
+One of the problems commonly encountered with using strict warnings is the
+problem of dependencies: you don’t want to enforce warnings on third-party
+libraries. Any warnings that arise from third-party libraries we typically want
+to ignore; i.e. we want to treat that library as a system library. To do this,
+we can use `target_link_libraries_system`, for example:
+
+[source,cmake]
+----
+add_executable(my_app src/main.cpp)
+target_link_libraries(my_app PRIVATE my_lib warnings)
+target_link_libraries_system(my_app PRIVATE fmt::fmt-header-only)
+----
+
+This is also used internally by functions like `add_unit_test` to silence
+warnings in unit tests frameworks.

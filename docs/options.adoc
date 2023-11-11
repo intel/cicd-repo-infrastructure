@@ -1,0 +1,41 @@
+
+== CMake options
+
+To control the action of this repository, you can set several CMake options (in
+the initial call to `cpmaddpackage` to pull in this repository as a dependency).
+All options default to `ON`.
+
+*`INFRA_PROVIDE_GITHUB_WORKFLOWS`*
+
+When `ON`, this repository provides `.yml` files inside the `.github` directory.
+
+*`INFRA_PROVIDE_CLANG_FORMAT`*
+
+When `ON`, this repository provides a `.clang-format` file at the root level.
+
+*`INFRA_PROVIDE_CLANG_TIDY`*
+
+When `ON`, this repository provides a `.clang-tidy` file at the root level.
+
+*`INFRA_PROVIDE_CMAKE_FORMAT`*
+
+When `ON`, this repository provides a `.cmake-format.yaml` file at the root level.
+
+*`INFRA_PROVIDE_PRESETS`*
+
+When `ON`, this repository provides a `CMakePresets.json` file at the root
+level, and a `toolchains` directory.
+
+*`INFRA_PROVIDE_GITIGNORE`*
+
+When `ON`, this repository provides a `.gitignore` file at the root level. It
+contains some commonly-used entries as well as lines to exclude the items (if
+any) provided by this repo.
+
+*`INFRA_USE_SYMLINKS`*
+
+When `ON`, the items provided will be symbolic links into this repo's downloaded
+directory. When `OFF`, the items will be copied.
+
+NOTE: Files inside the `.github` directory and the `.gitignore` file are always
+copied, never symlinked - otherwise they don't work.

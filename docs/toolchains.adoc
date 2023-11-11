@@ -1,0 +1,22 @@
+
+== Toolchains and presets
+
+If the `INFRA_PROVIDE_PRESETS` option is `ON`, a
+https://github.com/intel/cicd-repo-infrastructure/blob/main/CMakePresets.json[`CMakePresets.json`]
+file will be provided, together with
+https://github.com/intel/cicd-repo-infrastructure/tree/main/toolchains[toolchain
+files].
+
+Toolchain files are provided for gcc and clang. Where to find the compilers can
+be altered with the `TOOLCHAIN_ROOT` environment variable.
+
+[source,bash]
+----
+$ TOOLCHAIN_ROOT=/usr/lib/llvm-17 cmake --preset=clang
+----
+
+If needed, the `GCC_TOOLCHAIN_ROOT` environment variable can be used with a
+clang build to provide the `--gcc-toolchain` argument to the compiler.
+
+The `CXX_STDLIB` environment variable can be used to alter which standard
+library is used (libstdc+​+ or libc+​+).
