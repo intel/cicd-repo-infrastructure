@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 
+if(NOT PROJECT_NAME)
+    project(cicd)
+endif()
+
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
     file(REMOVE "${PROJECT_SOURCE_DIR}/cpm-package-lock.cmake")
     file(REMOVE_RECURSE "${PROJECT_SOURCE_DIR}/_deps")
