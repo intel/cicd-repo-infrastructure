@@ -29,6 +29,9 @@ shows exactly which version of which dependency was asked for, by whom, and in
 what order. A clashing dependency can then hopefully be resolved by asking for a
 more recent version earlier in the process.
 
+Whether or not the dependency tree is logged is controlled by the CMake option
+`LOG_CPM_DEPENDENCIES` which is `ON` by default.
+
 === Version satisfaction
 
 `add_versioned_package` is a bit smarter than `cpmaddpackage` about detecting a
@@ -66,15 +69,14 @@ satisfied. If the dependencies were fetched in the opposite order, an error
 would be reported.
 
 For git hashes, a dependency is considered satisfied if that hash appears in the
-ancestry of the already downloaded version. This applies whether or not the
-downloaded version was a semantic version like 10.1.1, or a git hash itself. As
-long as the requested hash is somewhere in the historical line, it's considered
-satisfied.
+ancestry of the already downloaded version. This applies whether the downloaded
+version was a semantic version like 10.1.1, or a git hash itself. As long as the
+requested hash is somewhere in the historical line, it's considered satisfied.
 
 === CPM recipes
 
 Many projects use CMake. Many projects use CMake in different ways, and not all
-of them work well with vanilla CPM usage. For popular projects that need some
+of them work well with naive CPM usage. For popular projects that need some
 careful handling,
 https://github.com/intel/cicd-repo-infrastructure/blob/main/cmake/cpm_recipes.cmake[CPM
 recipes] are provided, which encapsulate useful options passed to

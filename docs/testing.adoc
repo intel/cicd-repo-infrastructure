@@ -7,7 +7,9 @@ This repository provides several CMake functions to make defining tests easy.
 
 [source,cmake]
 ----
-add_unit_test(my_test CATCH2
+add_unit_test(
+  my_test
+  CATCH2
   FILES my_test.cpp
   LIBRARIES my_lib)
 ----
@@ -27,7 +29,8 @@ to use it with either of those frameworks.
 === BDD feature tests
 
 GUnit also provides for BDD-style "feature tests", which define tests in a
-Cucumber/Gherkin syntax feature file, and define steps in the C++.
+https://cucumber.io/docs/gherkin/[Cucumber/Gherkin syntax] feature file, and
+define steps in the C++.
 
 [source,cmake]
 ----
@@ -95,6 +98,6 @@ https://clang.llvm.org/docs/ThreadSanitizer.html[thread] sanitizers.
 
 === Valgrind
 
-CMake has built-in support for valgrind; using `ctest` with the `-T memcheck`
-option runs unit tests with valgrind. This is also done by the
-xref:github.adoc#_unit_tests_workflow[unit_tests workflow].
+CMake has built-in support for https://valgrind.org/[valgrind]; using `ctest`
+with the `-T memcheck` option runs unit tests with valgrind. This is also done
+by the xref:github.adoc#_unit_tests_workflow[unit_tests workflow].
