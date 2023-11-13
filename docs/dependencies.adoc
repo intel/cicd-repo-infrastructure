@@ -1,0 +1,86 @@
+
+== Dependency support
+
+We use https://github.com/cpm-cmake/CPM.cmake[CPM] as a mechanism for fetching
+and maintaining dependencies. To easily pull in dependencies for your project,
+use `add_versioned_package`:
+
+[source,cmake]
+----
+add_versioned_package("gh:fmtlib/fmt#10.1.1")
+----
+
+This is a wrapper around
+https://github.com/cpm-cmake/CPM.cmake#usage[`cpmaddpackage`] that supports the
+same arguments, but adds some features.
+
+=== Logging the dependency tree
+
+When working with several projects that use CPM to pull in dependencies, one
+ends up with a tree of dependencies, and the classical problem of dependencies
+can arise: if project A depends on projects B and C, and projects B and C each
+depend on project X but at different versions, CPM downloads X the first time it
+is asked. At the second time of asking, X does _not_ get redownloaded, leading to
+a possible dependency issue.
+
+`add_versioned_package` helps track down these issues by logging the dependency
+tree in the file `cpm_dependencies.txt`, in the CMake build directory. This
+shows exactly which version of which dependency was asked for, by whom, and in
+what order. A clashing dependency can then hopefully be resolved by asking for a
+more recent version earlier in the process.
+
+=== Version satisfaction
+
+`add_versioned_package` is a bit smarter than `cpmaddpackage` about detecting a
+version number and a git hash, and trying to decide whether a dependency is
+satisfied.
+
+For version numbers,
+https://cmake.org/cmake/help/latest/command/if.html#version-comparisons[CMake
+version comparisons] are used according to the `COMPARE` argument to
+`add_versioned_package` (`LESS`, `GREATER`, `EQUAL`, `LESS_EQUAL` or
+`GREATER_EQUAL`). The default is `GREATER_EQUAL`: if you're asking for a
+particular version, and a greater or equal version was already fetched, the
+dependency is satisfied.
+
+For example:
+
+[source,cmake]
+----
+# Our project depends on packages A and B
+add_versioned_package("gh:projectA/A#1.0.0")
+add_versioned_package("gh:projectB/B#1.0.0")
+
+# ...
+
+# Somewhere inside package A: a dependency on fmtlib at version 10.1.1
+add_versioned_package("gh:fmtlib/fmt#10.1.1")
+
+# Somewhere inside package B: a dependency on fmtlib at version 9.1.0
+add_versioned_package("gh:fmtlib/fmt#9.1.0")
+----
+
+In this case, when project B asks for `fmtlib`, it has already been fetched by
+project A, and at a higher version; B's dependency is considered already
+satisfied. If the dependencies were fetched in the opposite order, an error
+would be reported.
+
+For git hashes, a dependency is considered satisfied if that hash appears in the
+ancestry of the already downloaded version. This applies whether or not the
+downloaded version was a semantic version like 10.1.1, or a git hash itself. As
+long as the requested hash is somewhere in the historical line, it's considered
+satisfied.
+
+=== CPM recipes
+
+Many projects use CMake. Many projects use CMake in different ways, and not all
+of them work well with vanilla CPM usage. For popular projects that need some
+careful handling,
+https://github.com/intel/cicd-repo-infrastructure/blob/main/cmake/cpm_recipes.cmake[CPM
+recipes] are provided, which encapsulate useful options passed to
+`add_versioned_package`.
+
+[source,cmake]
+----
+boost_sml_recipe("1.1.9")
+----

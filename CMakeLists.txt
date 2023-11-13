@@ -1,3 +1,9 @@
+cmake_minimum_required(VERSION 3.25)
+
+if(NOT PROJECT_NAME)
+    project(cicd)
+endif()
+
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
     file(REMOVE "${PROJECT_SOURCE_DIR}/cpm-package-lock.cmake")
     file(REMOVE_RECURSE "${PROJECT_SOURCE_DIR}/_deps")
@@ -28,9 +34,22 @@ option(INFRA_PROVIDE_PRESETS "Provide cmake presets and toolchains" ON)
 option(INFRA_PROVIDE_GITIGNORE "Add provided things to .gitignore" ON)
 option(INFRA_USE_SYMLINKS "Use symlinks to provide common files" ON)
 
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_CURRENT_LIST_DIR)
+    set(INFRA_PROVIDE_GITHUB_WORKFLOWS OFF)
+    set(INFRA_PROVIDE_CLANG_FORMAT OFF)
+    set(INFRA_PROVIDE_CLANG_TIDY OFF)
+    set(INFRA_PROVIDE_CMAKE_FORMAT OFF)
+    set(INFRA_PROVIDE_PRESETS OFF)
+    set(INFRA_PROVIDE_GITIGNORE OFF)
+endif()
+
 include(cmake/cpm_recipes.cmake)
 include(cmake/dependencies.cmake)
 include(cmake/libraries.cmake)
 include(cmake/setup.cmake)
 include(cmake/quality.cmake)
 include(cmake/docs.cmake)
+
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_CURRENT_LIST_DIR)
+    add_docs(docs)
+endif()

@@ -2,10 +2,15 @@ if(COMMAND clang_tidy_interface)
     return()
 endif()
 
-function(clang_tidy_interface TARGET)
+function(clang_tidy_interface)
+    if(${ARGC} EQUAL 1)
+        set(CT_TARGET ${ARGV0})
+    else()
+        cmake_parse_arguments(CT "" "TARGET" "" ${ARGN})
+    endif()
     message(
         STATUS
-            "clang_tidy_interface(${TARGET}) is disabled because CMAKE_CXX_COMPILER_ID is ${CMAKE_CXX_COMPILER_ID}."
+            "clang_tidy_interface(${CT_TARGET}) is disabled because CMAKE_CXX_COMPILER_ID is ${CMAKE_CXX_COMPILER_ID}."
     )
 endfunction()
 

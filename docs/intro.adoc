@@ -1,0 +1,31 @@
+== Introduction
+
+This is a repository that is designed to make it easy to set up and maintain
+other C++-centric projects, by centralizing code (mostly CMake code) that
+runs CI.
+
+Unlike some other projects of this nature, it is not designed for use as a
+template repository. Rather, a few lines of CMake code will set up a dependency
+on this repository that can then be easily kept up to date.
+
+This repository provides functionality in three areas:
+
+- Github workflows
+- CMake utility functions
+- CMake toolchains
+
+=== Getting started
+
+First, https://github.com/cpm-cmake/CPM.cmake#adding-cpm[add `get_cpm.cmake`] to
+your project's repository. Then, make your CMakeLists.txt file look something
+like this at the top:
+
+[source,cmake]
+----
+cmake_minimum_required(VERSION 3.25)
+
+project(my_project)
+
+include(cmake/get_cpm.cmake)
+cpmaddpackage("gh:intel/cicd-repo-infrastructure#main")
+----

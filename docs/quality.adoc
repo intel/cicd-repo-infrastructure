@@ -1,0 +1,112 @@
+
+== Linting and formatting
+
+This repository provides support for linting and formatting code and ensuring
+that it stays that way.
+
+=== Formatting
+
+If the `INFRA_PROVIDE_CLANG_FORMAT` option is `ON`, a
+https://github.com/intel/cicd-repo-infrastructure/blob/main/.clang-format[`.clang-format`]
+file will be provided.
+
+If the `INFRA_PROVIDE_CMAKE_FORMAT` option is `ON`, a
+https://github.com/intel/cicd-repo-infrastructure/blob/main/.cmake-format.yaml[`.cmake-format.yaml`]
+file will be provided.
+
+To use these tools from CMake, we depend on
+https://github.com/TheLartians/Format.cmake[Format.cmake]. This results in three
+CMake targets for clang-format:
+
+- `clang-format`
+- `check-clang-format`
+- `fix-clang-format`
+
+Of these, the `clang-format` target is actually the least used. It runs
+`clang-format` on each file in the repository, with the results going to stdout.
+This is not typically very useful.
+
+The `check-clang-format` target is used by CI builds: it exits with an error if
+any file requires formatting. i.e. If any file would differ after `clang-format`
+runs.
+
+The `fix-clang-format` target is the most useful for developers: it uses
+`clang-format` to format files in-place.
+
+NOTE: `fix-clang-format` won't change files that are already changed in git's
+working tree.
+
+NOTE: For preference, we'll find the `clang-format` that exists alongside the
+compiler being used.
+
+There are three corresponding targets with the same behavior for cmake-format:
+
+- `cmake-format`
+- `check-cmake-format`
+- `fix-cmake-format`
+
+=== `clang-tidy`
+
+If the `INFRA_PROVIDE_CLANG_TIDY` option is `ON`, a
+https://github.com/intel/cicd-repo-infrastructure/blob/main/.clang-tidy[`.clang-tidy`]
+file will be provided.
+
+CMake has built-in support: to use `clang-tidy` with a cmake target, set the
+`CXX_CLANG_TIDY` property on it.
+
+However, if you have a header-only library, this repository provides a
+`clang_tidy_interface` function that makes it easy to lint header files.
+
+[source,cmake]
+----
+clang_tidy_interface(my_target)
+----
+
+This finds all the headers in the given target, and for each one, it creates an
+empty `.cpp` file that does nothing but `#include` that header. It creates a
+separate library target just for that generated `.cpp` file, and sets the
+`CXX_CLANG_TIDY` property on that library target.
+
+Each such generated target is then rolled up into a single `clang-tidy` target.
+
+The upshot of this is that each header is linted correctly. It also has the side
+effect of checking that each header can be included on its own.
+
+NOTE: Because constructing the clang-tidy targets globs the headers, an added
+file won't be included until CMake is re-run.
+
+You can still take advantage of `clang_tidy_interface` even if not all your code
+is linting cleanly, by providing exclusions:
+
+[source,cmake]
+----
+clang_tidy_interface(
+  TARGET my_target
+  EXCLUDE_DIRS mylib/A mylib/B
+  EXCLUDE_FILES mylib/file.hpp)
+----
+
+NOTE: `clang-tidy` is only a useful target when building with a clang toolchain.
+If you are not building with clang, the `clang-tidy` target will do nothing.
+
+NOTE: For preference, we'll find the `clang-tidy` that exists alongside the
+compiler being used.
+
+=== The `quality` target
+
+The `quality` target is built by CI. It encompasses three other targets:
+
+- `check-clang-format`
+- `check-cmake-format`
+- `clang-tidy`
+
+This is also a convenient to use on the command-line to check that job CI will
+pass. And any formatting failures can be fixed up by building the
+`fix-clang-format` and `fix-cmake-format` targets.
+
+NOTE: The `quality` job that is run by CI always uses the latest clang version
+enabled in CI. Sometimes this can disagree with what is run locally, if you have
+reason to be building locally with an older supported toolchain. For example, if
+you build locally with clang-15, but CI runs clang-17, you are likely to get
+minor differences of formatting or linting that cause CI failures. Use the
+latest tools for best quality!

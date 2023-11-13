@@ -1,0 +1,16 @@
+= CI/CD Repository Infrastructure
+:revnumber: 0.1
+:revdate: Nov 10, 2023
+:source-highlighter: rouge
+:rouge-style: base16.solarized
+:source-language: c++
+:toc: left
+
+include::intro.adoc[]
+include::options.adoc[]
+include::dependencies.adoc[]
+include::github.adoc[]
+include::quality.adoc[]
+include::warnings.adoc[]
+include::testing.adoc[]
+include::toolchains.adoc[]
