@@ -1,8 +1,10 @@
 
 == Libraries and warnings
 
-This repository provides an `INTERFACE` library called `warnings` that, when linked
-with, applies warnings to the code.
+This repository
+https://github.com/intel/cicd-repo-infrastructure/blob/main/cmake/warnings.cmake[provides
+an `INTERFACE` library] called `warnings` that, when linked with, applies
+warnings to the code.
 
 One of the problems commonly encountered with using strict warnings is the
 problem of dependencies: you don’t want to enforce warnings on third-party
@@ -19,3 +21,15 @@ target_link_libraries_system(my_app PRIVATE fmt::fmt-header-only)
 
 This is also used internally by functions like `add_unit_test` to silence
 warnings in unit tests frameworks.
+
+This repository also
+https://github.com/intel/cicd-repo-infrastructure/blob/main/cmake/profile.cmake[provides
+an `INTERFACE` library] called `profile-compilation` that, when linked with,
+passes profiling flags to the compiler, so that slow compilations can be
+tackled.
+
+[source,cmake]
+----
+add_executable(my_app src/main.cpp)
+target_link_libraries(my_app PRIVATE my_lib profile-compilation)
+----

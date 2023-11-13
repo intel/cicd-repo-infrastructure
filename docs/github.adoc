@@ -26,12 +26,15 @@ xref:testing.adoc#_valgrind[valgrind].
 === Documentation workflow
 
 This is a simple workflow that uses https://asciidoctor.org[AsciiDoctor] to
-build and publish documentation as Github Pages. Documentation source files are
-assumed to be in /docs; any static files are assumed to be in /docs/static. The
-documentation you are reading is authored with AsciiDoctor and published with
-this workflow.
+build and publish documentation as Github Pages. The documentation you are
+reading is authored with AsciiDoctor and published with this workflow.
 
-To set up documentation for a project, use the `add_docs` CMake function.
+To set up documentation for a project, use the `add_docs` CMake function. Its
+argument is the directory containing the docs.
+
+NOTE: Although CMake will build docs in any directory, the Github workflow that
+publishes the documentation assumes that documentation source files are in
+/docs, and any static files (diagrams etc) are assumed to be in /docs/static.
 
 [source,cmake]
 ----
@@ -39,7 +42,8 @@ add_docs(docs)
 ----
 
 This will set up a CMake target called `docs` which builds the AsciiDoctor
-documentation found in the `docs` directory.
+documentation found in the `docs` directory. (The `docs` argument here is the
+directory, not the target name.)
 
 NOTE: The relevant parts of `AsciiDoctor` must be installed on the system! This
 happens automatically with CI, but not for a local build.

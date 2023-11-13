@@ -23,18 +23,19 @@ CMake targets for clang-format:
 - `fix-clang-format`
 
 Of these, the `clang-format` target is actually the least used. It runs
-`clang-format` on each file in the repository, with the results going to stdout.
+`clang-format` on each file in the repository, with the results going to `stdout`.
 This is not typically very useful.
 
 The `check-clang-format` target is used by CI builds: it exits with an error if
-any file requires formatting. i.e. If any file would differ after `clang-format`
+any file requires formatting, i.e. if any file differs after `clang-format`
 runs.
 
 The `fix-clang-format` target is the most useful for developers: it uses
 `clang-format` to format files in-place.
 
 NOTE: `fix-clang-format` won't change files that are already changed in git's
-working tree.
+working tree. Robotic formatting changes should be applied in a separate commit
+for easy review.
 
 NOTE: For preference, we'll find the `clang-format` that exists alongside the
 compiler being used.
@@ -89,8 +90,8 @@ clang_tidy_interface(
 NOTE: `clang-tidy` is only a useful target when building with a clang toolchain.
 If you are not building with clang, the `clang-tidy` target will do nothing.
 
-NOTE: For preference, we'll find the `clang-tidy` that exists alongside the
-compiler being used.
+NOTE: As with `clang-format`, for preference, we'll find the `clang-tidy` that
+exists alongside the compiler being used.
 
 === The `quality` target
 
@@ -100,8 +101,8 @@ The `quality` target is built by CI. It encompasses three other targets:
 - `check-cmake-format`
 - `clang-tidy`
 
-This is also a convenient to use on the command-line to check that job CI will
-pass. And any formatting failures can be fixed up by building the
+This is also a convenient target to build on the command-line to check that job
+CI will pass. And any formatting failures can be fixed up by building the
 `fix-clang-format` and `fix-cmake-format` targets.
 
 NOTE: The `quality` job that is run by CI always uses the latest clang version
