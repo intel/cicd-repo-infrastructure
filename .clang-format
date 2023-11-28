@@ -6,6 +6,8 @@ IncludeCategories:
   - Regex: '^".*'
     Priority: 1
   - Regex: '^<(async|conc|container|cib|flow|interrupt|log|lookup|match|msg|safe|sc|seq)/.*'
+    Priority: 2
+  - Regex: '^<groov/.*'
     Priority: 4
   - Regex: '^<stdx/.*'
     Priority: 8
