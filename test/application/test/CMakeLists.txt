@@ -14,5 +14,7 @@ add_feature_test(
     LIBRARIES
     warnings)
 
+add_fuzz_test(fuzz_test FILES fuzz_test.cpp LIBRARIES warnings)
+
 add_compile_fail_test(compile_fail_test.cpp LIBRARIES warnings)
 add_compile_fail_test(compile_fail_test_no_pattern.cpp LIBRARIES warnings)

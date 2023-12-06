@@ -26,6 +26,22 @@ property-based testing; it integrates with either Catch2 or GoogleTest (or
 GUnit, which is based on GoogleTest). See the RapidCheck documentation for how
 to use it with either of those frameworks.
 
+=== Fuzz tests
+
+[source,cmake]
+----
+add_fuzz_test(
+  my_test
+  FILES my_test.cpp
+  LIBRARIES my_lib)
+----
+
+`add_fuzz_test` is a basic function for defining tests that use Google's
+https://github.com/google/fuzztest[`fuzztest`]. `GTEST` and `rapidcheck` macros
+are also available with these tests.
+
+NOTE: Fuzz tests are enabled only when the compiler is Clang.
+
 === BDD feature tests
 
 GUnit also provides for BDD-style "feature tests", which define tests in a

@@ -48,6 +48,21 @@ macro(get_gunit)
     endif()
 endmacro()
 
+macro(get_fuzztest)
+    if(NOT TARGET fuzztest)
+        add_versioned_package(
+            NAME
+            fuzztest
+            GIT_TAG
+            a4f6ad5
+            GITHUB_REPOSITORY
+            google/fuzztest
+            OPTIONS
+            "ANTLR_BUILD_CPP_TESTS OFF"
+            "ANTLR_BUILD_SHARED OFF")
+    endif()
+endmacro()
+
 macro(add_boost_di)
     if(NOT TARGET Boost.DI)
         add_versioned_package("gh:boost-ext/di@1.3.0")
@@ -217,6 +232,61 @@ macro(add_feature_test)
     add_boost_di()
     add_rapidcheck()
     add_feature_test_target(${ARGN})
+endmacro()
+
+function(add_fuzz_test_target name)
+    set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
+    cmake_parse_arguments(FUZZ "" "" "${multiValueArgs}" ${ARGN})
+
+    add_executable(${name} ${FUZZ_FILES})
+    target_include_directories(${name} PRIVATE ${FUZZ_INCLUDE_DIRECTORIES})
+    target_link_libraries(${name} PRIVATE ${FUZZ_LIBRARIES})
+    target_link_libraries_system(${name} PRIVATE ${FUZZ_SYSTEM_LIBRARIES})
+    add_dependencies(build_unit_tests ${name})
+
+    target_compile_definitions(
+        ${name} PRIVATE FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+                        ADDRESS_SANITIZER)
+    target_compile_options(
+        ${name} PRIVATE -g -UNDEBUG -fsanitize-coverage=inline-8bit-counters
+                        -fsanitize-coverage=trace-cmp -fsanitize=address)
+    target_link_options(${name} PRIVATE -fsanitize=address)
+
+    gtest_discover_tests(${name})
+    target_link_libraries_system(
+        ${name}
+        PRIVATE
+        gmock
+        gtest
+        rapidcheck
+        rapidcheck_gtest
+        rapidcheck_gmock
+        fuzztest::fuzztest_gtest_main)
+    set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+
+    add_custom_target(all_${name} ALL DEPENDS run_${name})
+    add_custom_target(run_${name} DEPENDS ${name}.passed)
+    add_custom_command(
+        OUTPUT ${name}.passed
+        COMMAND ${target_test_command}
+        COMMAND ${CMAKE_COMMAND} "-E" "touch" "${name}.passed"
+        DEPENDS ${name})
+
+    add_dependencies(unit_tests "run_${name}")
+endfunction()
+
+macro(add_fuzz_test)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        get_gtest()
+        get_fuzztest()
+        add_rapidcheck()
+        add_fuzz_test_target(${ARGN})
+    else()
+        message(
+            STATUS
+                "add_fuzz_test(${ARGN}) is disabled because CMAKE_CXX_COMPILER_ID is ${CMAKE_CXX_COMPILER_ID}."
+        )
+    endif()
 endmacro()
 
 function(add_compile_fail_test test_file)
