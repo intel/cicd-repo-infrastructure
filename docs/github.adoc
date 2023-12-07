@@ -32,6 +32,38 @@ reading is authored with AsciiDoctor and published with this workflow.
 To set up documentation for a project, use the `add_docs` CMake function. Its
 argument is the directory containing the docs.
 
+To put diagrams in documentation, use either
+https://ditaa.sourceforge.net/[Ditaa] (bundled with
+https://docs.asciidoctor.org/diagram-extension/latest/[asciidoctor-diagram]) or
+https://mermaid.js.org/[Mermaid] (also installed by the workflow).
+
+An example of a Mermaid diagram specified in AsciiDoctor:
+
+[source, asciidoctor]
+....
+[mermaid, format="svg"]
+----
+graph LR
+    A[Square Rect] -- Link text --> B((Circle))
+    A --> C(Round Rect)
+    B --> D{Rhombus}
+    C --> D
+----
+....
+
+And its output:
+
+[mermaid, format="svg"]
+----
+graph LR
+    A[Square Rect] -- Link text --> B((Circle))
+    A --> C(Round Rect)
+    B --> D{Rhombus}
+    C --> D
+----
+
+See more examples at https://mermaid.js.org/syntax/examples.html.
+
 NOTE: Although CMake will build docs in any directory, the Github workflow that
 publishes the documentation assumes that documentation source files are in
 /docs, and any static files (diagrams etc) are assumed to be in /docs/static.

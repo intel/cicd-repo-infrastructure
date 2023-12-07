@@ -307,8 +307,6 @@ function(add_compile_fail_test test_file)
     else()
         string(REGEX REPLACE ".*// EXPECT: " "" pattern ${pattern})
     endif()
-    message(
-        STATUS "EXPECTING ${pattern} in compilation failure for ${test_file}.")
 
     add_test(NAME ${test_name}
              COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target
