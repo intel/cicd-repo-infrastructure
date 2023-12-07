@@ -10,3 +10,12 @@ Ben Deane <ben.deane@intel.com>
 == Introduction
 
 This is a test library that exercises the infrastructure.
+
+[mermaid, format="svg"]
+----
+graph LR
+    A[Square Rect] -- Link text --> B((Circle))
+    A --> C(Round Rect)
+    B --> D{Rhombus}
+    C --> D
+----

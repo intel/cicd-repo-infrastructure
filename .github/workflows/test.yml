@@ -26,6 +26,16 @@ jobs:
           wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.TARGET_LLVM_VERSION}}
           sudo apt install -y python3-pip ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Mermaid
+        run: |
+          sudo npm install -g @mermaid-js/mermaid-cli@10.6.1
+          node /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/node_modules/puppeteer/install.js
+
       - name: Install asciidoctor
         run: |
           sudo apt update && sudo apt install -y asciidoctor
