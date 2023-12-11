@@ -20,7 +20,7 @@ configure_file(${CMAKE_ROOT}/Modules/DartConfiguration.tcl.in
 
 macro(get_catch2)
     if(NOT TARGET Catch2::Catch2WithMain)
-        add_versioned_package("gh:catchorg/Catch2@3.4.0")
+        add_versioned_package("gh:catchorg/Catch2@3.5.0")
         list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
         include(Catch)
     endif()
