@@ -1,4 +1,5 @@
 name: Publish GitHub Pages
+permissions: read-all
 
 on:
   workflow_dispatch:
