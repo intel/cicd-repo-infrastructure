@@ -94,7 +94,7 @@ macro(add_rapidcheck)
 endmacro()
 
 function(add_unit_test_target name)
-    set(options CATCH2 GTEST GUNIT)
+    set(options CATCH2 GTEST GUNIT NORANDOM)
     set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
     cmake_parse_arguments(UNIT "${options}" "" "${multiValueArgs}" ${ARGN})
 
@@ -106,12 +106,19 @@ function(add_unit_test_target name)
     add_dependencies(build_unit_tests ${name})
 
     if(UNIT_CATCH2)
-        catch_discover_tests(${name})
         target_link_libraries_system(${name} PRIVATE Catch2::Catch2WithMain
                                      rapidcheck rapidcheck_catch)
-        set(target_test_command $<TARGET_FILE:${name}> "--order" "rand")
+        if(UNIT_NORANDOM)
+            message(
+                WARNING
+                    "${name} is set to NORANDOM: unrandomized tests are not best practice"
+            )
+            set(target_test_command $<TARGET_FILE:${name}>)
+        else()
+            catch_discover_tests(${name})
+            set(target_test_command $<TARGET_FILE:${name}> "--order" "rand")
+        endif()
     elseif(UNIT_GTEST)
-        gtest_discover_tests(${name})
         target_link_libraries_system(
             ${name}
             PRIVATE
@@ -121,7 +128,16 @@ function(add_unit_test_target name)
             rapidcheck
             rapidcheck_gtest
             rapidcheck_gmock)
-        set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+        if(UNIT_NORANDOM)
+            message(
+                WARNING
+                    "${name} is set to NORANDOM: unrandomized tests are not best practice"
+            )
+            set(target_test_command $<TARGET_FILE:${name}>)
+        else()
+            gtest_discover_tests(${name})
+            set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+        endif()
     elseif(UNIT_GUNIT)
         target_include_directories(
             ${name} SYSTEM
@@ -136,8 +152,16 @@ function(add_unit_test_target name)
             rapidcheck
             rapidcheck_gtest
             rapidcheck_gmock)
-        set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
-        add_test(NAME ${name} COMMAND ${target_test_command})
+        if(UNIT_NORANDOM)
+            message(
+                WARNING
+                    "${name} is set to NORANDOM: unrandomized tests are not best practice"
+            )
+            set(target_test_command $<TARGET_FILE:${name}>)
+        else()
+            set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+            add_test(NAME ${name} COMMAND ${target_test_command})
+        endif()
     else()
         set(target_test_command $<TARGET_FILE:${name}>)
         add_test(NAME ${name} COMMAND ${target_test_command})
@@ -182,7 +206,7 @@ macro(add_unit_test)
 endmacro()
 
 function(add_feature_test_target name)
-    set(singleValueArgs FEATURE)
+    set(singleValueArgs FEATURE NORANDOM)
     set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
     cmake_parse_arguments(FEAT "" "${singleValueArgs}" "${multiValueArgs}"
                           ${ARGN})
@@ -209,7 +233,16 @@ function(add_feature_test_target name)
         rapidcheck
         rapidcheck_gtest
         rapidcheck_gmock)
-    set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+    if(FEAT_NORANDOM)
+        message(
+            WARNING
+                "${name} is set to NORANDOM: unrandomized tests are not best practice"
+        )
+        set(target_test_command $<TARGET_FILE:${name}>)
+    else()
+        set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+        add_test(NAME ${name} COMMAND ${target_test_command})
+    endif()
 
     add_custom_target(all_${name} ALL DEPENDS run_${name})
     add_custom_target(run_${name} DEPENDS ${name}.passed ${FEAT_FEATURE})
@@ -221,7 +254,6 @@ function(add_feature_test_target name)
         COMMAND ${CMAKE_COMMAND} "-E" "touch" "${name}.passed"
         DEPENDS ${name})
 
-    add_test(NAME ${name} COMMAND ${target_test_command})
     set_property(TEST ${name} PROPERTY ENVIRONMENT "SCENARIO=${FEATURE_FILE}")
     add_dependencies(unit_tests "run_${name}")
 endfunction()
@@ -235,6 +267,7 @@ macro(add_feature_test)
 endmacro()
 
 function(add_fuzz_test_target name)
+    set(singleValueArgs NORANDOM)
     set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
     cmake_parse_arguments(FUZZ "" "" "${multiValueArgs}" ${ARGN})
 
@@ -252,7 +285,6 @@ function(add_fuzz_test_target name)
                         -fsanitize-coverage=trace-cmp -fsanitize=address)
     target_link_options(${name} PRIVATE -fsanitize=address)
 
-    gtest_discover_tests(${name})
     target_link_libraries_system(
         ${name}
         PRIVATE
@@ -262,7 +294,16 @@ function(add_fuzz_test_target name)
         rapidcheck_gtest
         rapidcheck_gmock
         fuzztest::fuzztest_gtest_main)
-    set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+    if(FUZZ_NORANDOM)
+        message(
+            WARNING
+                "${name} is set to NORANDOM: unrandomized tests are not best practice"
+        )
+        set(target_test_command $<TARGET_FILE:${name}>)
+    else()
+        gtest_discover_tests(${name})
+        set(target_test_command $<TARGET_FILE:${name}> "--gtest_shuffle")
+    endif()
 
     add_custom_target(all_${name} ALL DEPENDS run_${name})
     add_custom_target(run_${name} DEPENDS ${name}.passed)
