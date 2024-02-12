@@ -18,3 +18,12 @@ add_fuzz_test(fuzz_test FILES fuzz_test.cpp LIBRARIES warnings)
 
 add_compile_fail_test(compile_fail_test.cpp LIBRARIES warnings)
 add_compile_fail_test(compile_fail_test_no_pattern.cpp LIBRARIES warnings)
+
+add_unit_test(
+    nonrandom_test
+    CATCH2
+    NORANDOM
+    FILES
+    nonrandom_test.cpp
+    LIBRARIES
+    warnings)
