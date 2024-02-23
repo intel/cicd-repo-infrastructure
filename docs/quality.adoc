@@ -95,13 +95,13 @@ exists alongside the compiler being used.
 
 === The `quality` target
 
-The `quality` target is built by CI. It encompasses three other targets:
+The `quality` target encompasses three other targets:
 
 - `check-clang-format`
 - `check-cmake-format`
 - `clang-tidy`
 
-This is also a convenient target to build on the command-line to check that job
+This is a convenient target to build on the command-line to check that
 CI will pass. And any formatting failures can be fixed up by building the
 `fix-clang-format` and `fix-cmake-format` targets.
 
@@ -111,3 +111,15 @@ reason to be building locally with an older supported toolchain. For example, if
 you build locally with clang-15, but CI runs clang-17, you are likely to get
 minor differences of formatting or linting that cause CI failures. Use the
 latest tools for best quality!
+
+=== The `clang-tidy-branch-diff` target
+
+Because `clang-tidy` can be somewhat expensive to run, `clang-tidy-branch-diff`
+is a target provided for CI instead. When the environment variable
+`PR_TARGET_BRANCH` is set to `main` (or any other branch that a PR will be
+merged into), `clang-tidy-branch-diff` builds the clang-tidy targets for the
+files which have changed between the PR branch and the target branch. It is
+fairly easy to set up CI to do this, but note that both branches must be
+fetched. See the `quality_checks_pass` job in
+https://github.com/intel/cicd-repo-infrastructure/blob/main/ci/.github/workflows/unit_tests.yml[`.github/workflows/unit_tests.yml`]
+for an example.
