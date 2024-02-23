@@ -48,19 +48,29 @@ jobs:
           sudo pip3 install cmake pyyaml cmake-format
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
-      - name: Checkout source
+      - name: Checkout target branch
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{github.base_ref}}
+
+      - name: Extract target branch SHA
+        run: echo "branch=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        id: target_branch
+
+      - name: Checkout PR branch
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Configure cmake for lib
         env:
           CC: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang"
           CXX: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang++"
+          PR_TARGET_BRANCH: ${{ steps.target_branch.outputs.branch }}
         working-directory: ${{github.workspace}}/test/library
         run: cmake -Bbuild
 
       - name: Check lib quality
         working-directory: ${{github.workspace}}/test/library
-        run: cmake --build build -t quality
+        run: cmake --build build -t ci-quality
 
       - name: Build lib docs
         working-directory: ${{github.workspace}}/test/library
