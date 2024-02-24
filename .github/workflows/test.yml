@@ -42,10 +42,10 @@ jobs:
           sudo apt update && sudo apt install -y asciidoctor
           sudo gem install asciidoctor asciidoctor-diagram rouge
 
-      - name: Install cmake and cmake-format
+      - name: Install cmake-format
         run: |
           sudo pip3 install --upgrade pip
-          sudo pip3 install cmake pyyaml cmake-format
+          sudo pip3 install pyyaml cmake-format
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
       - name: Checkout target branch
@@ -92,3 +92,30 @@ jobs:
       - name: Verify app setup
         working-directory: ${{github.workspace}}/test
         run: ./verify_links.sh
+
+  sanitize:
+    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [undefined, address]
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Install build tools
+        run: |
+          wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.TARGET_LLVM_VERSION}}
+          sudo apt install -y python3-pip ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
+
+      - name: Configure cmake for app
+        env:
+          CC: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang"
+          CXX: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang++"
+          SANITIZERS: ${{matrix.sanitizer}}
+        working-directory: ${{github.workspace}}/test/application
+        run: cmake -Bbuild
+
+      - name: Build app and run tests
+        working-directory: ${{github.workspace}}/test/application
+        run: cmake --build build -t unit_tests

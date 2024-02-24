@@ -18,6 +18,9 @@ set(MEMORYCHECK_COMMAND_OPTIONS
 configure_file(${CMAKE_ROOT}/Modules/DartConfiguration.tcl.in
                ${PROJECT_BINARY_DIR}/DartConfiguration.tcl)
 
+add_library(sanitizer-exceptions INTERFACE)
+target_compile_options(sanitizer-exceptions INTERFACE -fno-sanitize=vptr)
+
 macro(get_catch2)
     if(NOT TARGET Catch2::Catch2WithMain)
         add_versioned_package("gh:catchorg/Catch2@3.5.0")
@@ -162,7 +165,7 @@ function(add_unit_test_target name)
             rapidcheck
             rapidcheck_gtest
             rapidcheck_gmock)
-        target_compile_options(${name} PRIVATE "-fno-sanitize=vptr")
+        target_link_libraries(${name} PRIVATE sanitizer-exceptions)
         if(UNIT_NORANDOM)
             message(
                 WARNING
