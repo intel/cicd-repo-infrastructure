@@ -162,6 +162,7 @@ function(add_unit_test_target name)
             rapidcheck
             rapidcheck_gtest
             rapidcheck_gmock)
+        target_compile_options(${name} PRIVATE "-fno-sanitize=vptr")
         if(UNIT_NORANDOM)
             message(
                 WARNING
