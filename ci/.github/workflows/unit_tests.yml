@@ -111,7 +111,9 @@ jobs:
       - name: Install build tools
         run: |
           ${{ matrix.install }}
-          sudo apt install -y ninja-build
+          sudo apt install -y ninja-build python3-pip
+          sudo pip3 install --upgrade pip
+          sudo pip3 install cppyy hypothesis pytest pytest-forked
 
       - name: Configure CMake
         env:
