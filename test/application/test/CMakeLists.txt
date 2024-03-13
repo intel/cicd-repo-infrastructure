@@ -27,3 +27,5 @@ add_unit_test(
     nonrandom_test.cpp
     LIBRARIES
     warnings)
+
+add_unit_test(pytest_test PYTEST FILES pytest_test.py)

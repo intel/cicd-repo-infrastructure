@@ -26,6 +26,24 @@ property-based testing; it integrates with either Catch2 or GoogleTest (or
 GUnit, which is based on GoogleTest). See the RapidCheck documentation for how
 to use it with either of those frameworks.
 
+=== Python unit tests
+
+[source,cmake]
+----
+add_unit_test(
+  my_test
+  PYTEST
+  FILES my_test.py
+  LIBRARIES my_lib)
+----
+
+`add_unit_test` also supports running tests using https://pytest.org[pytest]. In
+this case the include paths implied by `LIBRARIES` are passed to the test with
+the command line `--include_dirs <paths>`. And the command line options can be
+handled with pytest's
+https://docs.pytest.org/en/8.0.x/reference/reference.html#pytest.hookspec.pytest_addoption[`addoption`
+hook].
+
 === Fuzz tests
 
 [source,cmake]
