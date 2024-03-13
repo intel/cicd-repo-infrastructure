@@ -48,6 +48,10 @@ jobs:
           sudo pip3 install pyyaml cmake-format
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
+      - name: Install python test tools
+        run: |
+          sudo pip3 install pytest pytest-forked hypothesis
+
       - name: Checkout target branch
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
@@ -106,7 +110,7 @@ jobs:
       - name: Install build tools
         run: |
           wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.TARGET_LLVM_VERSION}}
-          sudo apt install -y python3-pip ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
+          sudo apt install -y ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
 
       - name: Configure cmake for app
         env:
@@ -118,4 +122,4 @@ jobs:
 
       - name: Build app and run tests
         working-directory: ${{github.workspace}}/test/application
-        run: cmake --build build -t unit_tests
+        run: cmake --build build -t cpp_tests

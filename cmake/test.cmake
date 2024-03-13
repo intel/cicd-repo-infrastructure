@@ -3,7 +3,11 @@ cmake_minimum_required(VERSION 3.25)
 option(BUILD_TESTING "" OFF)
 include(CTest)
 add_custom_target(unit_tests)
+add_custom_target(cpp_tests)
+add_custom_target(python_tests)
 add_custom_target(build_unit_tests)
+add_dependencies(unit_tests cpp_tests python_tests)
+
 set(CMAKE_TESTING_ENABLED
     1
     CACHE INTERNAL "")
@@ -189,13 +193,67 @@ function(add_unit_test_target name)
         COMMAND ${CMAKE_COMMAND} "-E" "touch" "${name}.passed"
         DEPENDS ${name})
 
-    add_dependencies(unit_tests "run_${name}")
+    add_dependencies(cpp_tests "run_${name}")
+endfunction()
+
+function(collect_library_includes output)
+    set(libs ${ARGN})
+    foreach(lib ${libs})
+        get_target_property(include_dirs ${lib} INTERFACE_INCLUDE_DIRECTORIES)
+        if(include_dirs)
+            list(APPEND includes ${include_dirs})
+        endif()
+
+        get_target_property(sub_libs ${lib} INTERFACE_LINK_LIBRARIES)
+        if(sub_libs)
+            collect_library_includes(sub_include_dirs ${sublibs})
+            list(APPEND includes ${sub_include_dirs})
+        endif()
+    endforeach()
+    set(${output}
+        ${includes}
+        PARENT_SCOPE)
+endfunction()
+
+function(add_python_test_target name)
+    set(multiValueArgs FILES INCLUDE_FILES INCLUDE_DIRECTORIES LIBRARIES)
+    cmake_parse_arguments(UNIT "" "" "${multiValueArgs}" ${ARGN})
+    list(TRANSFORM UNIT_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+    list(TRANSFORM UNIT_INCLUDE_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+
+    collect_library_includes(include_dirs ${UNIT_LIBRARIES})
+    list(APPEND include_dirs ${UNIT_INCLUDE_DIRECTORIES})
+    list(REMOVE_DUPLICATES include_dirs)
+
+    if(UNIT_INCLUDE_FILES)
+        set(include_files_arg --include_files ${UNIT_INCLUDE_FILES})
+    endif()
+    if(include_dirs)
+        set(include_dirs_arg --include_dirs ${include_dirs})
+    endif()
+    set(target_test_command
+        env "PYTHONPYCACHEPREFIX=${CMAKE_BINARY_DIR}/__pycache__" pytest
+        --forked -o "cache_dir=${CMAKE_BINARY_DIR}/.pytest_cache"
+        --rootdir=${CMAKE_SOURCE_DIR} -s ${UNIT_FILES} ${include_files_arg}
+        ${include_dirs_arg})
+    add_test(NAME ${name} COMMAND ${target_test_command} COMMAND_EXPAND_LISTS)
+
+    add_custom_target(all_${name} ALL DEPENDS run_${name})
+    add_custom_target(run_${name} DEPENDS ${name}.passed)
+    add_custom_command(
+        OUTPUT ${name}.passed
+        COMMAND ${target_test_command}
+        COMMAND ${CMAKE_COMMAND} "-E" "touch" "${name}.passed"
+        DEPENDS ${UNIT_FILES} ${UNIT_LIBRARIES}
+        COMMAND_EXPAND_LISTS)
+
+    add_dependencies(python_tests "run_${name}")
 endfunction()
 
 function(detect_test_framework)
-    set(options CATCH2 GTEST GUNIT)
+    set(options CATCH2 GTEST GUNIT PYTEST)
     cmake_parse_arguments(TF "${options}" "" "" ${ARGN})
-    return(PROPAGATE TF_CATCH2 TF_GTEST TF_GUNIT)
+    return(PROPAGATE TF_CATCH2 TF_GTEST TF_GUNIT TF_PYTEST)
 endfunction()
 
 macro(add_unit_test)
@@ -216,7 +274,12 @@ macro(add_unit_test)
         add_rapidcheck()
         unset(TF_GUNIT)
     endif()
-    add_unit_test_target(${ARGN})
+    if(TF_PYTEST)
+        add_python_test_target(${ARGN})
+        unset(TF_PYTEST)
+    else()
+        add_unit_test_target(${ARGN})
+    endif()
 endmacro()
 
 function(add_feature_test_target name)
@@ -269,7 +332,7 @@ function(add_feature_test_target name)
         DEPENDS ${name})
 
     set_property(TEST ${name} PROPERTY ENVIRONMENT "SCENARIO=${FEATURE_FILE}")
-    add_dependencies(unit_tests "run_${name}")
+    add_dependencies(cpp_tests "run_${name}")
 endfunction()
 
 macro(add_feature_test)
@@ -332,7 +395,7 @@ function(add_fuzz_test_target name)
         COMMAND ${CMAKE_COMMAND} "-E" "touch" "${name}.passed"
         DEPENDS ${name})
 
-    add_dependencies(unit_tests "run_${name}")
+    add_dependencies(cpp_tests "run_${name}")
 endfunction()
 
 macro(add_fuzz_test)
