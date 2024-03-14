@@ -236,6 +236,8 @@ function(add_python_test_target name)
         --forked -o "cache_dir=${CMAKE_BINARY_DIR}/.pytest_cache"
         --rootdir=${CMAKE_SOURCE_DIR} -s ${UNIT_FILES} ${include_files_arg}
         ${include_dirs_arg})
+
+    string(PREPEND name "PYTHON.")
     add_test(NAME ${name} COMMAND ${target_test_command} COMMAND_EXPAND_LISTS)
 
     add_custom_target(all_${name} ALL DEPENDS run_${name})
