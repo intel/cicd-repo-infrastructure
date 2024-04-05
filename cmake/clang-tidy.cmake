@@ -98,9 +98,9 @@ function(compute_clang_tidy_branch_diff)
         list(TRANSFORM changed_files REPLACE "\.hpp" "" OUTPUT_VARIABLE
                                                         changed_targets)
         set_intersection(diff_targets SET1 ${ct_deps} SET2 ${changed_targets})
-        if(diff_targets)
-            add_dependencies(clang-tidy-branch-diff "${diff_targets}")
-        endif()
+        foreach(diff ${diff_targets})
+            add_dependencies(clang-tidy-branch-diff "${diff}")
+        endforeach()
     endif()
 endfunction()
 
