@@ -29,3 +29,4 @@ add_unit_test(
     warnings)
 
 add_unit_test(pytest_test PYTEST FILES pytest_test.py)
+mypy_lint(FILES pytest_test.py)
