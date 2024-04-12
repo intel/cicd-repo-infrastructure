@@ -19,6 +19,8 @@ if(CLANG_TIDY_PROGRAM)
     message(STATUS "clang-tidy found at ${CLANG_TIDY_PROGRAM}.")
     add_custom_target(clang-tidy)
     add_custom_target(clang-tidy-branch-diff)
+    add_dependencies(quality clang-tidy)
+    add_dependencies(ci-quality clang-tidy-branch-diff)
 else()
     message(STATUS "clang-tidy not found. Adding dummy target.")
     set(CLANG_TIDY_NOT_FOUND_COMMAND_ARGS
@@ -28,11 +30,6 @@ else()
     add_custom_target(clang-tidy ${CLANG_TIDY_NOT_FOUND_COMMAND_ARGS})
     add_custom_target(clang-tidy-branch-diff
                       ${CLANG_TIDY_NOT_FOUND_COMMAND_ARGS})
-endif()
-add_dependencies(quality clang-tidy)
-add_dependencies(ci-quality clang-tidy-branch-diff)
-
-if(NOT CLANG_TIDY_PROGRAM)
     return()
 endif()
 
