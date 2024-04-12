@@ -4,9 +4,11 @@ endfunction()
 
 find_program(MYPY_PROGRAM "mypy")
 if(MYPY_PROGRAM)
-    message(STATUS "mypy found at: ${MYPY_PROGRAM}")
+    message(STATUS "mypy found at ${MYPY_PROGRAM}")
     add_custom_target(mypy-lint)
     add_custom_target(mypy-lint-branch-diff)
+    add_dependencies(quality mypy-lint)
+    add_dependencies(ci-quality mypy-lint-branch-diff)
 else()
     message(STATUS "mypy not found. Adding dummy target.")
     set(MYPY_NOT_FOUND_COMMAND_ARGS
@@ -15,12 +17,6 @@ else()
         false)
     add_custom_target(mypy-lint ${MYPY_NOT_FOUND_COMMAND_ARGS})
     add_custom_target(mypy-lint-branch-diff ${MYPY_NOT_FOUND_COMMAND_ARGS})
-endif()
-
-add_dependencies(quality mypy-lint)
-add_dependencies(ci-quality mypy-lint-branch-diff)
-
-if(NOT MYPY_PROGRAM)
     return()
 endif()
 
