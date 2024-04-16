@@ -55,13 +55,13 @@ function(compute_branch_diff TARGET EXTENSION)
     endif()
     get_target_property(ct_deps ${TARGET} MANUALLY_ADDED_DEPENDENCIES)
     execute_process(
-        COMMAND git rev-parse --show-prefix
+        COMMAND ${GIT_PROGRAM} rev-parse --show-prefix
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE prefix
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     execute_process(
-        COMMAND git diff-tree --no-commit-id --name-only --diff-filter=AMR -r
-                HEAD $ENV{PR_TARGET_BRANCH}
+        COMMAND ${GIT_PROGRAM} diff-tree --no-commit-id --name-only
+                --diff-filter=AMR -r HEAD $ENV{PR_TARGET_BRANCH}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE changed_files
         OUTPUT_STRIP_TRAILING_WHITESPACE)

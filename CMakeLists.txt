@@ -43,6 +43,11 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_CURRENT_LIST_DIR)
     set(INFRA_PROVIDE_GITIGNORE OFF)
 endif()
 
+find_program(GIT_PROGRAM "git")
+if(NOT GIT_PROGRAM)
+    message(FATAL_ERROR "git not found!")
+endif()
+
 include(cmake/cpm_recipes.cmake)
 include(cmake/dependencies.cmake)
 include(cmake/libraries.cmake)

@@ -39,7 +39,7 @@ endfunction()
 
 function(identify_git_tag dep tag is_tag)
     execute_process(
-        COMMAND git tag -l ${tag}
+        COMMAND ${GIT_PROGRAM} tag -l ${tag}
         WORKING_DIRECTORY ${${dep}_SOURCE_DIR}
         OUTPUT_VARIABLE out_tag
         OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -54,12 +54,12 @@ endfunction()
 function(check_dependency_version dep version)
     if(${dep}_SOURCE_DIR)
         execute_process(
-            COMMAND git rev-parse --short HEAD
+            COMMAND ${GIT_PROGRAM} rev-parse --short HEAD
             WORKING_DIRECTORY ${${dep}_SOURCE_DIR}
             OUTPUT_VARIABLE head_hash
             OUTPUT_STRIP_TRAILING_WHITESPACE)
         execute_process(
-            COMMAND git tag -l --points-at ${head_hash}
+            COMMAND ${GIT_PROGRAM} tag -l --points-at ${head_hash}
             WORKING_DIRECTORY ${${dep}_SOURCE_DIR}
             OUTPUT_VARIABLE head_version
             OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -77,7 +77,8 @@ function(check_dependency_version dep version)
             check_version(${dep} ${version} ${comp} ${head_version})
         else()
             execute_process(
-                COMMAND git merge-base --is-ancestor ${version} ${head_hash}
+                COMMAND ${GIT_PROGRAM} merge-base --is-ancestor ${version}
+                        ${head_hash}
                 WORKING_DIRECTORY ${${dep}_SOURCE_DIR}
                 RESULT_VARIABLE hash_ok)
             if(hash_ok EQUAL 0)
