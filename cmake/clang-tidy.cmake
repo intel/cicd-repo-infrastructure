@@ -34,7 +34,7 @@ else()
 endif()
 
 set(CREATE_CLANG_TIDIABLE_SCRIPT
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/create-clang-tidiable.sh"
+    "${CMAKE_CURRENT_LIST_DIR}/scripts/create-clang-tidiable.sh"
     CACHE STRING "" FORCE)
 
 function(clang_tidy_header HEADER TARGET)

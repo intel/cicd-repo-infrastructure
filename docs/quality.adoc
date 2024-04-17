@@ -4,17 +4,13 @@
 This repository provides support for linting and formatting code and ensuring
 that it stays that way.
 
-=== Formatting
+=== `clang-format`
 
 If the `INFRA_PROVIDE_CLANG_FORMAT` option is `ON`, a
 https://github.com/intel/cicd-repo-infrastructure/blob/main/.clang-format[`.clang-format`]
 file will be provided.
 
-If the `INFRA_PROVIDE_CMAKE_FORMAT` option is `ON`, a
-https://github.com/intel/cicd-repo-infrastructure/blob/main/.cmake-format.yaml[`.cmake-format.yaml`]
-file will be provided.
-
-To use these tools from CMake, we depend on
+To use `clang-format` from CMake, we depend on
 https://github.com/TheLartians/Format.cmake[Format.cmake]. This results in three
 CMake targets for clang-format:
 
@@ -40,11 +36,29 @@ for easy review.
 NOTE: For preference, we'll find the `clang-format` that exists alongside the
 compiler being used.
 
-There are three corresponding targets with the same behavior for cmake-format:
+=== `cmake-format`
+
+If the `INFRA_PROVIDE_CMAKE_FORMAT` option is `ON`, a
+https://github.com/intel/cicd-repo-infrastructure/blob/main/.cmake-format.yaml[`.cmake-format.yaml`]
+file will be provided.
+
+As with clang-format, https://github.com/TheLartians/Format.cmake[Format.cmake]
+provides three targets for cmake-format:
 
 - `cmake-format`
 - `check-cmake-format`
 - `fix-cmake-format`
+
+=== `black`
+
+Python code is formatted using https://github.com/psf/black[black]. There are
+two targets with the appropriate behavior:
+
+- `check-black-format`
+- `fix-black-format`
+
+NOTE: Like `fix-clang-format`, `fix-black-format` won't change files that are
+already changed in git's working tree.
 
 === `clang-tidy`
 
@@ -93,17 +107,31 @@ If you are not building with clang, the `clang-tidy` target will do nothing.
 NOTE: As with `clang-format`, for preference, we'll find the `clang-tidy` that
 exists alongside the compiler being used.
 
+=== `mypy`
+
+Python linting is available using https://mypy-lang.org/[`mypy`]. To lint python
+files, call `mypy_lint`:
+
+[source,cmake]
+----
+mypy_lint(FILES file1.py file2.py)
+----
+
+And then buliding the `mypy-lint` target runs `mypy` against these files.
+
 === The `quality` target
 
-The `quality` target encompasses three other targets:
+The `quality` target encompasses other targets:
 
 - `check-clang-format`
 - `check-cmake-format`
 - `clang-tidy`
+- `check-black-format`
+- `mypy-lint`
 
 This is a convenient target to build on the command-line to check that
 CI will pass. And any formatting failures can be fixed up by building the
-`fix-clang-format` and `fix-cmake-format` targets.
+`fix-clang-format`, `fix-cmake-format`, and `fix-black-format` targets.
 
 NOTE: The `quality` job that is run by CI always uses the latest clang version
 enabled in CI. Sometimes this can disagree with what is run locally, if you have
@@ -112,14 +140,19 @@ you build locally with clang-15, but CI runs clang-17, you are likely to get
 minor differences of formatting or linting that cause CI failures. Use the
 latest tools for best quality!
 
-=== The `clang-tidy-branch-diff` target
+=== The `ci-quality` and `*-branch-diff` targets
 
-Because `clang-tidy` can be somewhat expensive to run, `clang-tidy-branch-diff`
-is a target provided for CI instead. When the environment variable
-`PR_TARGET_BRANCH` is set to `main` (or any other branch that a PR will be
-merged into), `clang-tidy-branch-diff` builds the clang-tidy targets for the
-files which have changed between the PR branch and the target branch. It is
-fairly easy to set up CI to do this, but note that both branches must be
+Because linters can be somewhat expensive to run on a whole codebase,
+alternative targets for CI lint only what changed in a pull request.
+
+When the environment variable `PR_TARGET_BRANCH` is set to `main` (or any other
+branch that a PR will be merged into), `clang-tidy-branch-diff` builds the
+clang-tidy targets for the files which have changed between the PR branch and
+the target branch. Likewise `mypy-lint-branch-diff` does the same thing for the
+mypy-lint targets. The `ci-quality` target depends on these "diff" targets
+rather than on the corresponding "full" targets.
+
+It is fairly easy to set up CI to do this, but note that both branches must be
 fetched. See the `quality_checks_pass` job in
 https://github.com/intel/cicd-repo-infrastructure/blob/main/ci/.github/workflows/unit_tests.yml[`.github/workflows/unit_tests.yml`]
 for an example.
