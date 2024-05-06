@@ -11,7 +11,7 @@ IncludeCategories:
     Priority: 4
   - Regex: '^<stdx/.*'
     Priority: 8
-  - Regex: '^<(boost|catch2|fmt|fuzztest|gmock|gtest|rapidcheck)/.*'
+  - Regex: '^<(boost|catch2|fmt|fuzztest|gmock|gtest|rapidcheck|snitch)/.*'
     Priority: 9
   - Regex: '^<GUnit.h>'
     Priority: 9
