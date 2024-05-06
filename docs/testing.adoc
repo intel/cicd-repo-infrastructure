@@ -14,12 +14,13 @@ add_unit_test(
   LIBRARIES my_lib)
 ----
 
-`add_unit_test` is a basic function for defining unit tests. Three unit test
+`add_unit_test` is a basic function for defining unit tests. Four unit test
 framework options are supported (according to the given argument):
 
 - https://github.com/catchorg/catch2[`CATCH2`]
 - https://github.com/google/googletest[`GTEST`]
 - https://github.com/cpp-testing/gunit[`GUNIT`]
+- https://github.com/snitch-org/snitch[`SNITCH`]
 
 https://github.com/emil-e/rapidcheck[RapidCheck] is also provided for
 property-based testing; it integrates with either Catch2 or GoogleTest (or

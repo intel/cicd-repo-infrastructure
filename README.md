@@ -3,7 +3,8 @@
 [![Unit Tests](https://github.com/intel/cicd-repo-infrastructure/actions/workflows/test.yml/badge.svg)](https://github.com/intel/cicd-repo-infrastructure/actions/workflows/test.yml)
 
 This repository provides infrastructure to support CI in other repositories. It
-is designed to be consumed with [CPM](https://github.com/cpm-cmake/CPM.cmake).
+is designed to be used with [CMake](https://cmake.org/) v3.25 or higher, and
+consumed with [CPM](https://github.com/cpm-cmake/CPM.cmake).
 
 See the [full documentation](https://intel.github.io/cicd-repo-infrastructure/).
 
@@ -29,10 +30,11 @@ Where `main` is the version of this repository you want to depend on.
 
 This repository depends on:
 
+- [Boost-ext.DI](https://github.com/boost-ext/di) at version 1.3.0
+- [Catch2](https://github.com/catchorg/Catch2) at version 3.5.0
 - [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) at version 0.38.2
-- [Catch2](https://github.com/catchorg/Catch2) at version 3.4.0
 - [GoogleTest](https://github.com/google/googletest) at version 1.14.0
 - [GUnit](https://github.com/cpp-testing/GUnit) at version 1.14.0
-- [Boost-ext.DI](https://github.com/boost-ext/di) at version 1.3.0
 - [RapidCheck](https://github.com/emil-e/rapidcheck) at git hash 1c91f40
+- [Snitch](https://github.com/snitch-org/snitch) at version 1.2.4
 
