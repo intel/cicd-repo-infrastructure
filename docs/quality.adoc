@@ -117,7 +117,7 @@ files, call `mypy_lint`:
 mypy_lint(FILES file1.py file2.py)
 ----
 
-And then buliding the `mypy-lint` target runs `mypy` against these files.
+And then building the `mypy-lint` target runs `mypy` against these files.
 
 === The `quality` target
 
