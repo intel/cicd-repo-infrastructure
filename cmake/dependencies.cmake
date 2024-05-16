@@ -73,7 +73,7 @@ function(check_dependency_version dep version)
         endif()
 
         identify_git_tag(${dep} ${version} is_tag)
-        if(is_tag)
+        if(is_tag AND head_version)
             check_version(${dep} ${version} ${comp} ${head_version})
         else()
             execute_process(
