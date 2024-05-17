@@ -13,7 +13,7 @@ copied into the `.github` directory:
 The unit tests workflow provides a job matrix that builds the cartesian product
 of:
 
-- Clang 14 through 17
+- Clang 14 through 18
 - GCC 12 through 13
 - libstdc+​+ and libc+​+
 - C++20
