@@ -12,7 +12,7 @@ be altered with the `TOOLCHAIN_ROOT` environment variable.
 
 [source,bash]
 ----
-$ TOOLCHAIN_ROOT=/usr/lib/llvm-17 cmake --preset=clang
+$ TOOLCHAIN_ROOT=/usr/lib/llvm-18 cmake --preset=clang
 ----
 
 If needed, the `GCC_TOOLCHAIN_ROOT` environment variable can be used with a

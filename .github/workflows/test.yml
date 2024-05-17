@@ -12,7 +12,7 @@ on:
 env:
   DEBIAN_FRONTEND: noninteractive
   CMAKE_GENERATOR: Ninja
-  TARGET_LLVM_VERSION: 17
+  TARGET_LLVM_VERSION: 18
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}

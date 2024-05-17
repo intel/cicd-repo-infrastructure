@@ -136,7 +136,7 @@ CI will pass. And any formatting failures can be fixed up by building the
 NOTE: The `quality` job that is run by CI always uses the latest clang version
 enabled in CI. Sometimes this can disagree with what is run locally, if you have
 reason to be building locally with an older supported toolchain. For example, if
-you build locally with clang-15, but CI runs clang-17, you are likely to get
+you build locally with clang-15, but CI runs clang-18, you are likely to get
 minor differences of formatting or linting that cause CI failures. Use the
 latest tools for best quality!
 
