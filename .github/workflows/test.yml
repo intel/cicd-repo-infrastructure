@@ -94,6 +94,11 @@ jobs:
           cmake --build build -t build_unit_tests
           ctest --test-dir build
 
+      - name: Run recipe tests
+        working-directory: ${{github.workspace}}/test/application
+        run: |
+          cmake --build build -t recipe_tests
+
       - name: Check app quality
         working-directory: ${{github.workspace}}/test/application
         run: cmake --build build -t ci-quality
