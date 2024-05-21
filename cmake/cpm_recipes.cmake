@@ -13,6 +13,23 @@ if(NOT COMMAND fmt_recipe)
     endmacro()
 endif()
 
+if(NOT COMMAND boost_hana_recipe)
+    macro(boost_hana_recipe VERSION)
+        add_versioned_package(
+            NAME
+            hana
+            GITHUB_REPOSITORY
+            "boostorg/hana"
+            GIT_TAG
+            ${VERSION}
+            DOWNLOAD_ONLY
+            YES)
+        add_library(boost_hana INTERFACE)
+        target_include_directories(boost_hana
+                                   INTERFACE "${hana_SOURCE_DIR}/include")
+    endmacro()
+endif()
+
 if(NOT COMMAND boost_sml_recipe)
     macro(boost_sml_recipe VERSION)
         add_versioned_package(
