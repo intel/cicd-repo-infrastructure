@@ -184,3 +184,59 @@ function(add_versioned_package)
         ${${CPM_LAST_PACKAGE_NAME}_ADDED}
         PARENT_SCOPE)
 endfunction()
+
+function(update_versioned_package)
+    list(LENGTH ARGN argnLength)
+    if(argnLength EQUAL 1)
+        cpm_parse_add_package_single_arg("${ARGN}" ARGN)
+    endif()
+
+    set(oneValueArgs NAME GITHUB_REPOSITORY GIT_TAG)
+    cmake_parse_arguments(ARGS "" "${oneValueArgs}" "" "${ARGN}")
+
+    if(NOT DEFINED ARGS_GIT_TAG)
+        set(ARGS_GIT_TAG v${ARGS_VERSION})
+    endif()
+    set(GIT_URI "https://github.com/${ARGS_GITHUB_REPOSITORY}.git")
+    if(NOT DEFINED ARGS_NAME)
+        cpm_package_name_from_git_uri(${GIT_URI} ARGS_NAME)
+    endif()
+
+    set(pkg_dir ${${ARGS_NAME}_SOURCE_DIR})
+    execute_process(
+        COMMAND ${GIT_PROGRAM} ls-remote -h ${GIT_URI} ${ARGS_GIT_TAG}
+        WORKING_DIRECTORY ${pkg_dir}
+        OUTPUT_VARIABLE remote_hash
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX REPLACE "\t.*" "" remote_hash ${remote_hash})
+
+    execute_process(
+        COMMAND ${GIT_PROGRAM} rev-parse HEAD
+        WORKING_DIRECTORY ${pkg_dir}
+        OUTPUT_VARIABLE head_hash
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    if(NOT head_hash STREQUAL remote_hash)
+        message(
+            STATUS
+                "update_versioned_package: ${ARGS_NAME} is not at latest ${ARGS_GIT_TAG} -- updating."
+        )
+        execute_process(COMMAND ${GIT_PROGRAM} fetch origin
+                        WORKING_DIRECTORY ${pkg_dir})
+        execute_process(
+            COMMAND ${GIT_PROGRAM} reset --hard "origin/${ARGS_GIT_TAG}"
+            WORKING_DIRECTORY ${pkg_dir}
+            RESULT_VARIABLE reset_ok)
+        if(NOT reset_ok EQUAL 0)
+            message(
+                FATAL
+                "Couldn't update ${ARGS_NAME} to ${ARGS_GIT_TAG} - check the repository at ${pkg_dir}."
+            )
+        endif()
+    else()
+        message(
+            STATUS
+                "update_versioned_package: ${ARGS_NAME} is at ${ARGS_GIT_TAG} already."
+        )
+    endif()
+endfunction()
