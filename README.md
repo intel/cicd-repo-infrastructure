@@ -3,7 +3,7 @@
 [![Unit Tests](https://github.com/intel/cicd-repo-infrastructure/actions/workflows/test.yml/badge.svg)](https://github.com/intel/cicd-repo-infrastructure/actions/workflows/test.yml)
 
 This repository provides infrastructure to support CI in other repositories. It
-is designed to be used with [CMake](https://cmake.org/) v3.25 or higher, and
+is designed to be used with [CMake](https://cmake.org/) v3.27 or higher, and
 consumed with [CPM](https://github.com/cpm-cmake/CPM.cmake).
 
 See the [full documentation](https://intel.github.io/cicd-repo-infrastructure/).
@@ -16,7 +16,7 @@ here](https://github.com/cpm-cmake/CPM.cmake#adding-cpm).
 Then, the top of your CMakeLists.txt file should look something like this:
 
 ```cmake
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.27)
 
 project(my_project)
 

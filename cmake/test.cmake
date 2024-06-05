@@ -105,7 +105,7 @@ macro(add_rapidcheck)
 endmacro()
 
 function(add_unit_test_target name)
-    set(options CATCH2 GTEST GUNIT NORANDOM SNITCH)
+    set(options CATCH2 GTEST GUNIT NORANDOM SNITCH COVERAGE)
     set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
     cmake_parse_arguments(UNIT "${options}" "" "${multiValueArgs}" ${ARGN})
 
@@ -200,8 +200,12 @@ function(add_unit_test_target name)
         COMMAND ${target_test_command}
         COMMAND ${CMAKE_COMMAND} "-E" "touch" "${name}.passed"
         DEPENDS ${name})
-
     add_dependencies(cpp_tests "run_${name}")
+
+    if(UNIT_COVERAGE)
+        target_link_libraries(${name} PRIVATE coverage)
+        add_test_coverage_target(${name})
+    endif()
 endfunction()
 
 function(collect_library_includes output)
@@ -297,7 +301,7 @@ macro(add_unit_test)
 endmacro()
 
 function(add_feature_test_target name)
-    set(singleValueArgs FEATURE NORANDOM)
+    set(singleValueArgs FEATURE NORANDOM COVERAGE)
     set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
     cmake_parse_arguments(FEAT "" "${singleValueArgs}" "${multiValueArgs}"
                           ${ARGN})
@@ -347,6 +351,11 @@ function(add_feature_test_target name)
 
     set_property(TEST ${name} PROPERTY ENVIRONMENT "SCENARIO=${FEATURE_FILE}")
     add_dependencies(cpp_tests "run_${name}")
+
+    if(UNIT_COVERAGE)
+        target_link_libraries(${name} PRIVATE coverage)
+        add_test_coverage_target(${name})
+    endif()
 endfunction()
 
 macro(add_feature_test)
@@ -358,7 +367,7 @@ macro(add_feature_test)
 endmacro()
 
 function(add_fuzz_test_target name)
-    set(singleValueArgs NORANDOM)
+    set(singleValueArgs NORANDOM COVERAGE)
     set(multiValueArgs FILES INCLUDE_DIRECTORIES LIBRARIES SYSTEM_LIBRARIES)
     cmake_parse_arguments(FUZZ "" "" "${multiValueArgs}" ${ARGN})
 
@@ -410,6 +419,11 @@ function(add_fuzz_test_target name)
         DEPENDS ${name})
 
     add_dependencies(cpp_tests "run_${name}")
+
+    if(UNIT_COVERAGE)
+        target_link_libraries(${name} PRIVATE coverage)
+        add_test_coverage_target(${name})
+    endif()
 endfunction()
 
 macro(add_fuzz_test)
