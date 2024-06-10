@@ -34,5 +34,6 @@ target_compile_options(
         # other compilation flags
         $<$<CXX_COMPILER_ID:Clang>:-ferror-limit=8>
         $<$<CXX_COMPILER_ID:GNU>:-fmax-errors=8>
-        -ftemplate-backtrace-limit=0
-        $<$<STREQUAL:${CMAKE_GENERATOR},Ninja>:-fdiagnostics-color>)
+        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-ftemplate-backtrace-limit=0>
+        $<$<AND:$<STREQUAL:${CMAKE_GENERATOR},Ninja>,$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>>:-fdiagnostics-color>
+)
