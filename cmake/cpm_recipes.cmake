@@ -24,9 +24,11 @@ if(NOT COMMAND boost_hana_recipe)
             ${VERSION}
             DOWNLOAD_ONLY
             YES)
-        add_library(boost_hana INTERFACE)
-        target_include_directories(boost_hana
-                                   INTERFACE "${hana_SOURCE_DIR}/include")
+        if(NOT TARGET boost_hana)
+            add_library(boost_hana INTERFACE)
+            target_include_directories(boost_hana
+                                       INTERFACE "${hana_SOURCE_DIR}/include")
+        endif()
     endmacro()
 endif()
 
