@@ -30,10 +30,4 @@ target_compile_options(
         -Wunused
         $<$<CXX_COMPILER_ID:Clang>:-Wmissing-prototypes>
         # warnings turned off
-        $<$<CXX_COMPILER_ID:Clang>:-Wno-gnu-string-literal-operator-template>
-        # other compilation flags
-        $<$<CXX_COMPILER_ID:Clang>:-ferror-limit=8>
-        $<$<CXX_COMPILER_ID:GNU>:-fmax-errors=8>
-        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-ftemplate-backtrace-limit=0>
-        $<$<AND:$<STREQUAL:${CMAKE_GENERATOR},Ninja>,$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>>:-fdiagnostics-color>
-)
+        $<$<CXX_COMPILER_ID:Clang>:-Wno-gnu-string-literal-operator-template>)
