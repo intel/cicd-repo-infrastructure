@@ -1,12 +1,42 @@
-add_unit_test(catch2_test CATCH2 FILES catch2_test.cpp LIBRARIES warnings)
-add_unit_test(gtest_test GTEST FILES gtest_test.cpp LIBRARIES warnings)
+add_unit_test(
+    catch2_test
+    CATCH2
+    FILES
+    catch2_test.cpp
+    LIBRARIES
+    diagnostics
+    warnings)
 
-add_unit_test(gunit_test GUNIT FILES gunit_test.cpp LIBRARIES warnings)
+add_unit_test(
+    gtest_test
+    GTEST
+    FILES
+    gtest_test.cpp
+    LIBRARIES
+    diagnostics
+    warnings)
+
+add_unit_test(
+    gunit_test
+    GUNIT
+    FILES
+    gunit_test.cpp
+    LIBRARIES
+    diagnostics
+    warnings)
 target_compile_features(gunit_test PRIVATE cxx_std_17)
 
-add_unit_test(snitch_test SNITCH FILES snitch_test.cpp LIBRARIES warnings)
+add_unit_test(
+    snitch_test
+    SNITCH
+    FILES
+    snitch_test.cpp
+    LIBRARIES
+    diagnostics
+    warnings)
 
-add_unit_test(custom_test FILES custom_test.cpp LIBRARIES warnings)
+add_unit_test(custom_test FILES custom_test.cpp LIBRARIES diagnostics warnings)
+
 add_feature_test(
     gunit_feature_test
     FILES
@@ -14,12 +44,14 @@ add_feature_test(
     FEATURE
     test.feature
     LIBRARIES
+    diagnostics
     warnings)
 
-add_fuzz_test(fuzz_test FILES fuzz_test.cpp LIBRARIES warnings)
+add_fuzz_test(fuzz_test FILES fuzz_test.cpp LIBRARIES diagnostics warnings)
 
-add_compile_fail_test(compile_fail_test.cpp LIBRARIES warnings)
-add_compile_fail_test(compile_fail_test_no_pattern.cpp LIBRARIES warnings)
+add_compile_fail_test(compile_fail_test.cpp LIBRARIES diagnostics warnings)
+add_compile_fail_test(compile_fail_test_no_pattern.cpp LIBRARIES diagnostics
+                      warnings)
 
 add_unit_test(
     nonrandom_test
@@ -28,6 +60,7 @@ add_unit_test(
     FILES
     nonrandom_test.cpp
     LIBRARIES
+    diagnostics
     warnings)
 
 add_unit_test(pytest_test PYTEST FILES pytest_test.py)
