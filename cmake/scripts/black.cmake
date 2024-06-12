@@ -38,7 +38,7 @@ foreach(f ${extant_files})
         INPUT_FILE ${f}
         OUTPUT_FILE ${FORMATTED_FILE})
 
-    execute_process(COMMAND ${GIT_PROGRAM} diff --quiet --no-index -- ${f}
+    execute_process(COMMAND ${GIT_PROGRAM} diff --quiet -G. --no-index -- ${f}
                             ${FORMATTED_FILE} RESULT_VARIABLE result)
     if(result)
         message(FATAL_ERROR "${f} needs to be reformatted ")
