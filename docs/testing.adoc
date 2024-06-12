@@ -136,3 +136,39 @@ https://clang.llvm.org/docs/ThreadSanitizer.html[thread] sanitizers.
 CMake has built-in support for https://valgrind.org/[valgrind]; using `ctest`
 with the `-T memcheck` option runs unit tests with valgrind. This is also done
 by the xref:github.adoc#_unit_tests_workflow[unit_tests workflow].
+
+=== Test code coverage
+
+To get code coverage reports, use the `COVERAGE` argument with `add_unit_test`.
+[source,cmake]
+----
+add_unit_test(
+  my_test
+  CATCH2
+  COVERAGE
+  FILES my_test.cpp
+  LIBRARIES my_lib)
+----
+
+This will generate a target that will produce a test coverage report in `<build directory>/coverage`.
+
+[source,bash]
+----
+$ cmake --build build -t coverage_report_my_test
+# coverage report is in build/coverage/my_test.coverage_report.txt
+----
+
+If multiple tests generate coverage reports, the rolled-up report can be built
+using the `cpp_coverage_report` target:
+[source,bash]
+----
+$ cmake --build build -t cpp_coverage_report
+# combined coverage report is in build/coverage_report.txt
+----
+
+The `COVERAGE` argument can also be used with `add_feature_test` or `add_fuzz_test`.
+
+NOTE: Test coverage uses LLVM's
+https://clang.llvm.org/docs/SourceBasedCodeCoverage.html[source-based code
+coverage] tooling, so is only available when using a clang toolchain, and only
+for C++ (not Python) tests.
