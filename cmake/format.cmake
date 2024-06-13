@@ -1,3 +1,4 @@
+get_filename_component(CT_ROOT ${CMAKE_CXX_COMPILER} DIRECTORY)
 find_program(CLANG_FORMAT_PROGRAM "clang-format" HINTS ${CT_ROOT})
 if(CLANG_FORMAT_PROGRAM)
     message(STATUS "clang-format found: ${CLANG_FORMAT_PROGRAM}")

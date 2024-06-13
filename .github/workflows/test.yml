@@ -99,16 +99,6 @@ jobs:
         run: |
           cmake --build build -t recipe_tests
 
-      - name: Generate coverage report
-        working-directory: ${{github.workspace}}/test/application
-        run: |
-          cmake --build build -t cpp_coverage_report
-          echo "<details>" >> $GITHUB_STEP_SUMMARY
-          echo "<summary>" >> $GITHUB_STEP_SUMMARY
-          cat ./build/coverage_report.txt >> $GITHUB_STEP_SUMMARY
-          echo "</summary>" >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
-
       - name: Check app quality
         working-directory: ${{github.workspace}}/test/application
         run: cmake --build build -t ci-quality
