@@ -21,10 +21,10 @@ cmake_minimum_required(VERSION 3.25)
 project(my_project)
 
 include(cmake/get_cpm.cmake)
-cpmaddpackage("gh:intel/cicd-repo-infrastructure#main")
+cpmaddpackage("gh:intel/cicd-repo-infrastructure#abc123")
 ```
 
-Where `main` is the version of this repository you want to depend on.
+Where `abc123` is the version of this repository you want to depend on.
 
 ## Dependencies
 
