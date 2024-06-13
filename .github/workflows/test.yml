@@ -53,7 +53,7 @@ jobs:
           sudo pip3 install pytest pytest-forked hypothesis mypy black
 
       - name: Checkout target branch
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: ${{github.base_ref}}
 
@@ -62,7 +62,7 @@ jobs:
         id: target_branch
 
       - name: Checkout PR branch
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Configure cmake for lib
         env:
@@ -115,7 +115,7 @@ jobs:
         sanitizer: [undefined, address]
 
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Install build tools
         run: |
