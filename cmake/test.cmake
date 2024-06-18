@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.25)
-
 option(BUILD_TESTING "" OFF)
 include(CTest)
 add_custom_target(unit_tests)

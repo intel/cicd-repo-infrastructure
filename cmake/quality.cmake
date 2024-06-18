@@ -10,6 +10,7 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
     include(${CMAKE_CURRENT_LIST_DIR}/sanitizers.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/test.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/benchmark.cmake)
 
     include(${CMAKE_CURRENT_LIST_DIR}/warnings.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/profile.cmake)

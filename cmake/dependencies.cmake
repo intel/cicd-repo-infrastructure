@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.25)
-
 if(COMMAND add_versioned_package)
     return()
 endif()
