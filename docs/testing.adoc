@@ -1,7 +1,7 @@
 
 == Testing
 
-This repository provides several CMake functions to make defining tests easy.
+This repository provides CMake functions to make defining tests easy.
 
 === Defining unit tests
 
@@ -26,6 +26,23 @@ https://github.com/emil-e/rapidcheck[RapidCheck] is also provided for
 property-based testing; it integrates with either Catch2 or GoogleTest (or
 GUnit, which is based on GoogleTest). See the RapidCheck documentation for how
 to use it with either of those frameworks.
+
+The arguments to `add_unit_test` are:
+
+- test name
+- optionally, a test framework to use
+- `FILES` to be compiled
+- optionally, extra `INCLUDE_DIRECTORIES` to use
+- optionally, extra `LIBRARIES` to link with
+- optionally, extra `SYSTEM_LIBRARIES` to link with
+- optionally, `NORANDOM`
+
+NOTE: By default, tests will run in a random order unless the `NORANDOM`
+argument is given.
+
+It is possible to define a unit test without using any of the supported
+frameworks. In that case, just write your own test program, with `main`
+returning zero on test success and non-zero on test failure.
 
 === Python unit tests
 
@@ -61,6 +78,8 @@ are also available with these tests.
 
 NOTE: Fuzz tests are enabled only when the compiler is Clang.
 
+`add_fuzz_test` takes the same optional arguments as `add_unit_test`.
+
 === BDD feature tests
 
 GUnit also provides for BDD-style "feature tests", which define tests in a
@@ -79,6 +98,8 @@ add_feature_test(
     my_lib
     warnings)
 ----
+
+`add_feature_test` takes the same optional arguments as `add_unit_test`.
 
 === Compilation failure tests
 
@@ -109,6 +130,8 @@ with the `test` target or by `ctest`.
 
 NOTE: Because `ctest` information is updated at CMake time, changing the
 `EXPECT` comment of a test requires re-running CMake to update what is expected.
+
+`add_compile_fail_test` takes the same optional arguments as `add_unit_test`.
 
 === Sanitizers
 

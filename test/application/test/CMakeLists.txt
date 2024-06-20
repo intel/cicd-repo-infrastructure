@@ -65,3 +65,12 @@ add_unit_test(
 
 add_unit_test(pytest_test PYTEST FILES pytest_test.py)
 mypy_lint(FILES pytest_test.py)
+
+add_benchmark(
+    nanobm_test
+    NANO
+    FILES
+    nanobm_test.cpp
+    LIBRARIES
+    diagnostics
+    warnings)

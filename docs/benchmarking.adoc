@@ -1,0 +1,23 @@
+
+== Benchmarking
+
+This repository provides CMake functions to make defining benchmarks easy.
+
+=== Defining benchmarks
+
+[source,cmake]
+----
+add_benchmark(
+  my_benchmark
+  NANO
+  FILES my_benchmark.cpp
+  LIBRARIES my_lib)
+----
+
+`add_benchmark` is a basic function for defining benchmarks. At the moment, the
+only benchmark framework supported is
+https://github.com/martinus/nanobench[`NANO`].
+
+`add_benchmark` takes the same optional arguments as `add_unit_test`.
+
+NOTE: benchmark targets are compiled with `-O3 -march=native`.
