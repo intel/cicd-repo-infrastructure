@@ -32,31 +32,34 @@ else()
 endif()
 
 function(add_docs DIRECTORY)
+    file(REAL_PATH ${DIRECTORY} real_dir)
+    file(RELATIVE_PATH rel_dir ${CMAKE_SOURCE_DIR} ${real_dir})
+    string(REPLACE "/" "_" target ${rel_dir})
     add_custom_target(
-        docs_${DIRECTORY} DEPENDS ${CMAKE_BINARY_DIR}/${DIRECTORY}/index.html
-                                  ${CMAKE_BINARY_DIR}/${DIRECTORY}/static)
-    if(EXISTS ${CMAKE_SOURCE_DIR}/${DIRECTORY}/static)
+        docs_${target} DEPENDS ${CMAKE_BINARY_DIR}/${rel_dir}/index.html
+                               ${CMAKE_BINARY_DIR}/${rel_dir}/static)
+    if(EXISTS ${CMAKE_SOURCE_DIR}/${rel_dir}/static)
         add_custom_command(
-            OUTPUT ${CMAKE_BINARY_DIR}/${DIRECTORY}/static
+            OUTPUT ${CMAKE_BINARY_DIR}/${rel_dir}/static
             COMMAND
                 ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/${DIRECTORY}/static
-                ${CMAKE_BINARY_DIR}/${DIRECTORY}/static
-            DEPENDS ${CMAKE_SOURCE_DIR}/${DIRECTORY}/static)
+                ${CMAKE_SOURCE_DIR}/${rel_dir}/static
+                ${CMAKE_BINARY_DIR}/${rel_dir}/static
+            DEPENDS ${CMAKE_SOURCE_DIR}/${rel_dir}/static)
     else()
         add_custom_command(
-            OUTPUT ${CMAKE_BINARY_DIR}/${DIRECTORY}/static
+            OUTPUT ${CMAKE_BINARY_DIR}/${rel_dir}/static
             COMMAND ${CMAKE_COMMAND} -E make_directory
-                    ${CMAKE_BINARY_DIR}/${DIRECTORY}/static)
+                    ${CMAKE_BINARY_DIR}/${rel_dir}/static)
     endif()
 
-    file(GLOB_RECURSE doc_files ${CMAKE_SOURCE_DIR}/${DIRECTORY}/*.adoc)
+    file(GLOB_RECURSE doc_files ${CMAKE_SOURCE_DIR}/${rel_dir}/*.adoc)
     add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/${DIRECTORY}/index.html
+        OUTPUT ${CMAKE_BINARY_DIR}/${rel_dir}/index.html
         COMMAND
             ${ASCIIDOCTOR_PROGRAM} -r asciidoctor-diagram
-            ${CMAKE_SOURCE_DIR}/${DIRECTORY}/index.adoc -D
-            ${CMAKE_BINARY_DIR}/${DIRECTORY}
+            ${CMAKE_SOURCE_DIR}/${rel_dir}/index.adoc -D
+            ${CMAKE_BINARY_DIR}/${rel_dir}
         DEPENDS ${doc_files})
-    add_dependencies(docs docs_${DIRECTORY})
+    add_dependencies(docs docs_${target})
 endfunction()

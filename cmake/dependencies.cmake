@@ -5,10 +5,12 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/get_cpm.cmake)
 
 if(NOT DEFINED ENV{CPM_SOURCE_CACHE})
-    message(
-        STATUS
-            "The environment variable \$CPM_SOURCE_CACHE is not defined: defining a CPM cache is recommended to avoid extra downloads."
-    )
+    if(NOT DEFINED CPM_SOURCE_CACHE)
+        message(
+            STATUS
+                "The environment variable \$CPM_SOURCE_CACHE is not defined: defining a CPM cache is recommended to avoid extra downloads."
+        )
+    endif()
 endif()
 
 function(check_version dep required comp)
