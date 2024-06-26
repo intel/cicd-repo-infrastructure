@@ -25,7 +25,7 @@ target_compile_options(sanitizer-exceptions INTERFACE -fno-sanitize=vptr)
 
 macro(get_catch2)
     if(NOT TARGET Catch2::Catch2WithMain)
-        add_versioned_package("gh:catchorg/Catch2@3.5.0")
+        add_versioned_package("gh:catchorg/Catch2@3.6.0")
         list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
         include(Catch)
     endif()
@@ -55,7 +55,7 @@ endmacro()
 
 macro(get_snitch)
     if(NOT TARGET snitch::snitch)
-        add_versioned_package("gh:snitch-org/snitch@1.2.4")
+        add_versioned_package("gh:snitch-org/snitch@1.2.5")
     endif()
 endmacro()
 
