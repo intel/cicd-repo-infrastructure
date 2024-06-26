@@ -70,13 +70,24 @@ jobs:
       - name: Checkout PR branch
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - name: Restore CPM cache
+        env:
+          cache-name: cpm-cache-0
+        id: cpm-cache-restore
+        uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: ~/cpm-cache
+          key: ${{runner.os}}-${{env.cache-name}}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+          restore-keys: |
+            ${{runner.os}}-${{env.cache-name}}-
+
       - name: Configure cmake for lib
         env:
           CC: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang"
           CXX: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang++"
           PR_TARGET_BRANCH: ${{ steps.target_branch.outputs.branch }}
         working-directory: ${{github.workspace}}/test/library
-        run: cmake -Bbuild
+        run: cmake -Bbuild -DCPM_SOURCE_CACHE=~/cpm-cache
 
       - name: Check lib quality
         working-directory: ${{github.workspace}}/test/library
@@ -92,7 +103,16 @@ jobs:
           CXX: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang++"
           PR_TARGET_BRANCH: ${{ steps.target_branch.outputs.branch }}
         working-directory: ${{github.workspace}}/test/application
-        run: cmake -Bbuild
+        run: cmake -Bbuild -DCPM_SOURCE_CACHE=~/cpm-cache
+
+      - name: Save CPM cache
+        env:
+          cache-name: cpm-cache-0
+        if: steps.cpm-cache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: ~/cpm-cache
+          key: ${{runner.os}}-${{env.cache-name}}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
 
       - name: Build app and run tests
         working-directory: ${{github.workspace}}/test/application
@@ -142,13 +162,33 @@ jobs:
           wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.TARGET_LLVM_VERSION}}
           sudo apt install -y ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
 
+      - name: Restore CPM cache
+        env:
+          cache-name: cpm-cache-0
+        id: cpm-cache-restore
+        uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: ~/cpm-cache
+          key: ${{runner.os}}-${{env.cache-name}}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+          restore-keys: |
+            ${{runner.os}}-${{env.cache-name}}-
+
       - name: Configure cmake for app
         env:
           CC: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang"
           CXX: "/usr/lib/llvm-${{env.TARGET_LLVM_VERSION}}/bin/clang++"
           SANITIZERS: ${{matrix.sanitizer}}
         working-directory: ${{github.workspace}}/test/application
-        run: cmake -Bbuild
+        run: cmake -Bbuild -DCPM_SOURCE_CACHE=~/cpm-cache
+
+      - name: Save CPM cache
+        env:
+          cache-name: cpm-cache-0
+        if: steps.cpm-cache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: ~/cpm-cache
+          key: ${{runner.os}}-${{env.cache-name}}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
 
       - name: Build app and run tests
         working-directory: ${{github.workspace}}/test/application
