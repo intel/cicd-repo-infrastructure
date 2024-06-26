@@ -27,5 +27,34 @@ cmake_minimum_required(VERSION 3.27)
 project(my_project)
 
 include(cmake/get_cpm.cmake)
-cpmaddpackage("gh:intel/cicd-repo-infrastructure#main")
+cpmaddpackage("gh:intel/cicd-repo-infrastructure#abc123")
 ----
+
+=== Auto updates
+
+If you rely on this repository at a branch name rather than a specific tag or
+hash, then what you probably intended was to pin to the head of that branch. In
+that case, the first thing this repository does is check that it is actually at
+the head of the upstream branch, and if not, update. This behaviour is
+controlled with the `INFRA_SELF_UPDATE` CMake option, which is `ON` by default.
+
+For example, if your CMakeLists.txt says:
+[source,cmake]
+----
+cpmaddpackage("gh:intel/cicd-repo-infrastructure#dev")
+----
+
+When you run CMake the first time, this repository is downloaded (at the head of
+the `dev` branch) and stored in the CPM cache.
+
+The second time you run CMake, this repository is already in the cache. This is
+fine if you are pinning to an immutable hash, but if you are using a branch as
+above, the upstream branch may have moved on. This is the case where an
+auto-update check is performed, to keep the downloaded repository at the head of
+`dev`.
+
+Auto-updates will not occur in the following circumstances:
+
+- `INFRA_SELF_UPDATE` is `OFF`
+- This repository is not fetched with CPM
+- You're using a filesystem copy rather than from a remote repository
