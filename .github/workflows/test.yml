@@ -5,9 +5,15 @@ on:
   workflow_dispatch:
   merge_group:
   push:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - 'dev'
+      - 'cmake-**'
   pull_request:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - 'dev'
+      - 'cmake-**'
 
 env:
   DEBIAN_FRONTEND: noninteractive
