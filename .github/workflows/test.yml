@@ -190,6 +190,27 @@ jobs:
           path: ~/cpm-cache
           key: ${{runner.os}}-${{env.cache-name}}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
 
+      # https://github.com/actions/runner-images/issues/9524
+      - name: Fix kernel mmap rnd bits
+        # Asan in llvm 14 provided in ubuntu 22.04 is incompatible with
+        # high-entropy ASLR in much newer kernels that GitHub runners are
+        # using leading to random crashes: https://reviews.llvm.org/D148280
+        run: sudo sysctl vm.mmap_rnd_bits=28
+
       - name: Build app and run tests
         working-directory: ${{github.workspace}}/test/application
         run: cmake --build build -t cpp_tests
+
+  merge_ok:
+    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-22.04
+    needs: [test, sanitize]
+    if: ${{ !cancelled() }}
+    steps:
+      - name: Enable merge
+        if: >-
+          ${{
+               contains(needs.*.result, 'failure')
+            || contains(needs.*.result, 'cancelled')
+            || contains(needs.*.result, 'skipped')
+          }}
+        run: exit 1
