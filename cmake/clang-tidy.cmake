@@ -61,34 +61,70 @@ function(clang_tidy_header HEADER TARGET)
     add_dependencies(clang-tidy "${CT_NAME}")
 endfunction()
 
-function(clang_tidy_interface)
-    if(${ARGC} EQUAL 1)
-        set(CT_TARGET ${ARGV0})
-    else()
-        set(options "")
-        set(oneValueArgs TARGET)
-        set(multiValueArgs EXCLUDE_DIRS EXCLUDE_FILES)
-        cmake_parse_arguments(CT "${options}" "${oneValueArgs}"
-                              "${multiValueArgs}" ${ARGN})
-    endif()
-
-    get_target_property(DIRS ${CT_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(SYSTEM_DIRS ${CT_TARGET}
+function(clang_tidy_dirs TARGET EXCLUDE_DIRS EXCLUDE_FILES)
+    get_target_property(DIRS ${TARGET} INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(SYSTEM_DIRS ${TARGET}
                         INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
     foreach(DIR ${DIRS})
         if(NOT DIR IN_LIST SYSTEM_DIRS)
             file(GLOB_RECURSE HEADERS "${DIR}/*.hpp")
             foreach(HEADER ${HEADERS})
                 file(RELATIVE_PATH CT_NAME ${CMAKE_SOURCE_DIR} ${HEADER})
-                if(NOT CT_NAME IN_LIST CT_EXCLUDE_FILES)
+                if(NOT CT_NAME IN_LIST EXCLUDE_FILES)
                     get_filename_component(HEADER_DIR ${CT_NAME} DIRECTORY)
-                    if(NOT HEADER_DIR IN_LIST CT_EXCLUDE_DIRS)
-                        clang_tidy_header(${HEADER} ${CT_TARGET})
+                    if(NOT HEADER_DIR IN_LIST EXCLUDE_DIRS)
+                        clang_tidy_header(${HEADER} ${TARGET})
                     endif()
                 endif()
             endforeach()
         endif()
     endforeach()
+endfunction()
+
+function(clang_tidy_header_sets TARGET EXCLUDE_DIRS EXCLUDE_FILES
+         EXCLUDE_FILESETS)
+    get_target_property(HEADER_SETS ${TARGET} INTERFACE_HEADER_SETS)
+    foreach(SET ${HEADER_SETS})
+        if(NOT SET IN_LIST EXCLUDE_FILESETS)
+            get_target_property(HEADERS ${TARGET} HEADER_SET_${SET})
+            foreach(HEADER ${HEADERS})
+                file(RELATIVE_PATH CT_NAME ${CMAKE_SOURCE_DIR} ${HEADER})
+                if(NOT CT_NAME IN_LIST EXCLUDE_FILES)
+                    get_filename_component(HEADER_DIR ${CT_NAME} DIRECTORY)
+                    if(NOT HEADER_DIR IN_LIST EXCLUDE_DIRS)
+                        clang_tidy_header(${HEADER} ${TARGET})
+                    endif()
+                endif()
+            endforeach()
+        endif()
+    endforeach()
+endfunction()
+
+function(clang_tidy_interface)
+    if(${ARGC} EQUAL 1)
+        set(CT_TARGET ${ARGV0})
+    else()
+        set(options "")
+        set(oneValueArgs TARGET)
+        set(multiValueArgs EXCLUDE_DIRS EXCLUDE_FILES EXCLUDE_FILESETS)
+        cmake_parse_arguments(CT "${options}" "${oneValueArgs}"
+                              "${multiValueArgs}" ${ARGN})
+    endif()
+
+    get_target_property(HEADER_SETS ${CT_TARGET} INTERFACE_HEADER_SETS)
+    if(HEADER_SETS)
+        message(
+            STATUS "Using INTERFACE_HEADER_SETS to clang-tidy ${CT_TARGET}.")
+        clang_tidy_header_sets(${CT_TARGET} "${CT_EXCLUDE_DIRS}"
+                               "${CT_EXCLUDE_FILES}" "${CT_EXCLUDE_FILESETS}")
+    else()
+        message(
+            NOTICE
+            "${CT_TARGET} has no INTERFACE_HEADER_SETS, using INTERFACE_INCLUDE_DIRECTORIES instead. "
+            "Use `target_sources` instead of `target_include_directories` to specify header sets for better control."
+        )
+        clang_tidy_dirs(${CT_TARGET} "${CT_EXCLUDE_DIRS}" "${CT_EXCLUDE_FILES}")
+    endif()
 
     compute_branch_diff(clang-tidy ".hpp")
 endfunction()
