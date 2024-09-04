@@ -87,8 +87,16 @@ Each such generated target is then rolled up into a single `clang-tidy` target.
 The upshot of this is that each header is linted correctly. It also has the side
 effect of checking that each header can be included on its own.
 
-NOTE: Because constructing the clang-tidy targets globs the headers, an added
-file won't be included until CMake is re-run.
+The way that `clang_tidy_interface` works depends on the target properties. If
+https://cmake.org/cmake/help/latest/command/target_sources.html[`target_sources`]
+is used with
+https://cmake.org/cmake/help/latest/command/target_sources.html#file-sets[`FILE_SET`],
+`clang_tidy_interface` finds the headers using that method. Otherwise -- when
+https://cmake.org/cmake/help/latest/command/target_include_directories.html[`target_include_directories`]
+is used -- `clang_tidy_interface` globs the headers in the include directories.
+
+NOTE: If `target_include_directories` is used to specify a target's headers,
+adding a header file won't clang-tidy it until CMake is re-run.
 
 You can still take advantage of `clang_tidy_interface` even if not all your code
 is linting cleanly, by providing exclusions:
@@ -98,8 +106,12 @@ is linting cleanly, by providing exclusions:
 clang_tidy_interface(
   TARGET my_target
   EXCLUDE_DIRS mylib/A mylib/B
-  EXCLUDE_FILES mylib/file.hpp)
+  EXCLUDE_FILES mylib/file.hpp
+  EXCLUDE_FILESETS exclusions)
 ----
+
+In particular the `EXCLUDE_FILESETS` argument can be used together with
+`target_sources`, separating excluded headers into a separate `FILE_SET`.
 
 NOTE: `clang-tidy` is only a useful target when building with a clang toolchain.
 If you are not building with clang, the `clang-tidy` target will do nothing.
