@@ -83,7 +83,7 @@ add_unit_test(
     diagnostics
     warnings)
 
-add_unit_test(pytest_test PYTEST FILES pytest_test.py)
+add_unit_test(pytest_test PYTEST FILES pytest_test.py EXTRA_ARGS --pass)
 mypy_lint(FILES pytest_test.py)
 
 add_benchmark(
