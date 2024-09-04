@@ -228,7 +228,8 @@ function(collect_library_includes output)
 endfunction()
 
 function(add_python_test_target name)
-    set(multiValueArgs FILES INCLUDE_FILES INCLUDE_DIRECTORIES LIBRARIES)
+    set(multiValueArgs FILES INCLUDE_FILES INCLUDE_DIRECTORIES LIBRARIES
+                       EXTRA_ARGS)
     cmake_parse_arguments(UNIT "" "" "${multiValueArgs}" ${ARGN})
     list(TRANSFORM UNIT_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
     list(TRANSFORM UNIT_INCLUDE_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
@@ -247,7 +248,7 @@ function(add_python_test_target name)
         env "PYTHONPYCACHEPREFIX=${CMAKE_BINARY_DIR}/__pycache__" pytest
         --forked -o "cache_dir=${CMAKE_BINARY_DIR}/.pytest_cache"
         --rootdir=${CMAKE_SOURCE_DIR} -s ${UNIT_FILES} ${include_files_arg}
-        ${include_dirs_arg})
+        ${include_dirs_arg} ${UNIT_EXTRA_ARGS})
 
     string(PREPEND name "PYTHON.")
     add_test(NAME ${name} COMMAND ${target_test_command} COMMAND_EXPAND_LISTS)
