@@ -101,6 +101,35 @@ add_feature_test(
 
 `add_feature_test` takes the same optional arguments as `add_unit_test`.
 
+=== Mutation tests
+
+When compiling with clang, any C++ test executable can be used to create a
+mutation test using https://github.com/mull-project/mull[mull].
+
+[source,cmake]
+----
+add_unit_test(
+  my_test
+  CATCH2
+  FILES my_test.cpp
+  LIBRARIES my_lib)
+
+add_mull_test(my_test)
+----
+
+The version of mull used must match the version of clang used. Arguments to `add_mull_test` are:
+
+- `EXCLUDE_CTEST` - to optionally exclude the test from the ctest suite
+- `PLUGIN_DIR` - to provide the location of `mull-ir-frontend-<version>`
+- `RUNNER_DIR` - to provide the location of `mull-runner-<version>`
+- `RUNNER_ARGS` - for any additional arguments to be passed to `mull-runner-<version>`
+
+`PLUGIN_DIR` and `RUNNER_DIR` may be omitted if they reside in `/usr/lib` and on
+the path respectively. In that case, cmake will find them and report that
+it has.
+
+For more information on mutation tests, see https://mull.readthedocs.io[the mull documentation].
+
 === Compilation failure tests
 
 When writing compile-time code, it's often useful to check compilation failures
