@@ -7,6 +7,7 @@ add_unit_test(
     LIBRARIES
     diagnostics
     warnings)
+add_mull_test(catch2_test EXCLUDE_CTEST RUNNER_ARGS --allow-surviving)
 
 add_unit_test(
     gtest_test

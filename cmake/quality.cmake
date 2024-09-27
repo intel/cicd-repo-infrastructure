@@ -18,6 +18,7 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     include(${CMAKE_CURRENT_LIST_DIR}/profile.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/diagnostics.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/coverage.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/mull.cmake)
 
     include(${CMAKE_CURRENT_LIST_DIR}/format.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/clang-tidy.cmake)

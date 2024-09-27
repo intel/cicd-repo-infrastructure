@@ -26,6 +26,10 @@ When `ON`, this repository provides a `.cmake-format.yaml` file at the root leve
 When `ON`, this repository provides a `CMakePresets.json` file at the root
 level, and a `toolchains` directory.
 
+*`INFRA_PROVIDE_MULL`*
+
+When `ON`, this repository provides a `mull.yml` file at the root level.
+
 *`INFRA_PROVIDE_GITIGNORE`*
 
 When `ON`, this repository provides a `.gitignore` file at the root level. It
