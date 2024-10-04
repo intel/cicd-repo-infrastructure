@@ -19,7 +19,7 @@ env:
   DEBIAN_FRONTEND: noninteractive
   CMAKE_GENERATOR: Ninja
   TARGET_LLVM_VERSION: 18
-  MULL_LLVM_VERSION: 15
+  MULL_LLVM_VERSION: 17
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -27,37 +27,40 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-22.04
+    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-24.04
     steps:
       - name: Install build tools
         run: |
           wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.TARGET_LLVM_VERSION}}
-          sudo apt install -y python3-pip ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
+          sudo apt update && sudo apt install -y pipx ninja-build clang-tidy-${{env.TARGET_LLVM_VERSION}} clang-format-${{env.TARGET_LLVM_VERSION}}
 
       - name: Setup Node.js
         uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4.0.4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install Mermaid
         run: |
-          sudo npm install -g @mermaid-js/mermaid-cli@10.6.1
-          node /usr/local/lib/node_modules/@mermaid-js/mermaid-cli/node_modules/puppeteer/install.js
+          sudo npm install -g @mermaid-js/mermaid-cli@11.2.0
 
       - name: Install asciidoctor
         run: |
-          sudo apt update && sudo apt install -y asciidoctor
+          sudo apt install -y asciidoctor
           sudo gem install asciidoctor asciidoctor-diagram rouge
 
       - name: Install cmake-format
         run: |
-          sudo pip3 install --upgrade pip
-          sudo pip3 install pyyaml cmake-format
-          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+          pipx install cmakelang
+          pipx inject cmakelang pyyaml
 
       - name: Install python quality tools
         run: |
-          sudo pip3 install pytest pytest-forked hypothesis mypy black
+          pipx install pytest
+          pipx inject pytest pytest-forked
+          pipx inject pytest hypothesis
+          pipx install mypy
+          pipx install black
+          echo "/opt/pipx_bin" >> $GITHUB_PATH
 
       - name: Checkout target branch
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
@@ -119,7 +122,7 @@ jobs:
         working-directory: ${{github.workspace}}/test/application
         run: |
           cmake --build build -t build_unit_tests
-          ctest --test-dir build
+          ctest --output-on-failure --test-dir build
 
       - name: Run benchmarks
         working-directory: ${{github.workspace}}/test/application
@@ -149,7 +152,7 @@ jobs:
         run: ./verify_links.sh
 
   sanitize:
-    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-22.04
+    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -203,19 +206,19 @@ jobs:
         run: cmake --build build -t cpp_tests
 
   mutate:
-    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-22.04
+    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-24.04
     steps:
       - name: Install build tools
         run: |
           wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh ${{env.MULL_LLVM_VERSION}}
-          sudo apt install -y python3-pip ninja-build
+          sudo apt install -y ninja-build
 
       - name: Install mull
         env:
           MULL_VERSION: 0.23.0
         run: |
-          wget https://github.com/mull-project/mull/releases/download/${{env.MULL_VERSION}}/Mull-${{env.MULL_LLVM_VERSION}}-${{env.MULL_VERSION}}-LLVM-${{env.MULL_LLVM_VERSION}}.0-ubuntu-22.04.deb
-          sudo dpkg -i Mull-${{env.MULL_LLVM_VERSION}}-${{env.MULL_VERSION}}-LLVM-${{env.MULL_LLVM_VERSION}}.0-ubuntu-22.04.deb
+          wget https://github.com/mull-project/mull/releases/download/${{env.MULL_VERSION}}/Mull-${{env.MULL_LLVM_VERSION}}-${{env.MULL_VERSION}}-LLVM-${{env.MULL_LLVM_VERSION}}.0-ubuntu-24.04.deb
+          sudo dpkg -i Mull-${{env.MULL_LLVM_VERSION}}-${{env.MULL_VERSION}}-LLVM-${{env.MULL_LLVM_VERSION}}.0-ubuntu-24.04.deb
 
       - name: Checkout PR branch
         uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
@@ -253,8 +256,8 @@ jobs:
           cmake --build build -t mull_tests
 
   merge_ok:
-    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-22.04
-    needs: [test, sanitize]
+    runs-on: ${{ github.repository_owner == 'intel' && 'intel-' || '' }}ubuntu-24.04
+    needs: [test, sanitize, mutate]
     if: ${{ !cancelled() }}
     steps:
       - name: Enable merge
