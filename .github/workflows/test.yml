@@ -63,7 +63,7 @@ jobs:
           echo "/opt/pipx_bin" >> $GITHUB_PATH
 
       - name: Checkout target branch
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         with:
           ref: ${{github.base_ref}}
 
@@ -72,7 +72,7 @@ jobs:
         id: target_branch
 
       - name: Checkout PR branch
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
       - name: Restore CPM cache
         env:
@@ -159,7 +159,7 @@ jobs:
         sanitizer: [undefined, address]
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
       - name: Install build tools
         run: |
@@ -221,7 +221,7 @@ jobs:
           sudo dpkg -i Mull-${{env.MULL_LLVM_VERSION}}-${{env.MULL_VERSION}}-LLVM-${{env.MULL_LLVM_VERSION}}.0-ubuntu-24.04.deb
 
       - name: Checkout PR branch
-        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
       - name: Restore CPM cache
         env:
