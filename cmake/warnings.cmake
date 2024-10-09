@@ -30,4 +30,5 @@ target_compile_options(
         -Wunused
         $<$<CXX_COMPILER_ID:Clang>:-Wmissing-prototypes>
         # warnings turned off
-        $<$<CXX_COMPILER_ID:Clang>:-Wno-gnu-string-literal-operator-template>)
+        $<$<CXX_COMPILER_ID:Clang>:-Wno-gnu-string-literal-operator-template>
+        $<$<CXX_COMPILER_ID:Clang>:-Wno-missing-braces>)
