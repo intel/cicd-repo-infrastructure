@@ -229,7 +229,7 @@ endfunction()
 
 function(add_python_test_target name)
     set(multiValueArgs FILES INCLUDE_FILES INCLUDE_DIRECTORIES LIBRARIES
-                       EXTRA_ARGS)
+                       EXTRA_ARGS EXTRA_DEPS)
     cmake_parse_arguments(UNIT "" "" "${multiValueArgs}" ${ARGN})
     list(TRANSFORM UNIT_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
     list(TRANSFORM UNIT_INCLUDE_FILES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
@@ -253,13 +253,21 @@ function(add_python_test_target name)
     string(PREPEND name "PYTHON.")
     add_test(NAME ${name} COMMAND ${target_test_command} COMMAND_EXPAND_LISTS)
 
+    foreach(file ${UNIT_FILES})
+        get_filename_component(this_dir ${file} DIRECTORY)
+        if(EXISTS "${this_dir}/conftest.py")
+            list(APPEND auto_dependencies "${this_dir}/conftest.py")
+        endif()
+    endforeach()
+
     add_custom_target(all_${name} ALL DEPENDS run_${name})
     add_custom_target(run_${name} DEPENDS ${name}.passed)
     add_custom_command(
         OUTPUT ${name}.passed
         COMMAND ${target_test_command}
         COMMAND ${CMAKE_COMMAND} "-E" "touch" "${name}.passed"
-        DEPENDS ${UNIT_FILES} ${UNIT_LIBRARIES}
+        DEPENDS ${UNIT_FILES} ${UNIT_LIBRARIES} ${UNIT_EXTRA_DEPS}
+                ${auto_dependencies}
         COMMAND_EXPAND_LISTS)
 
     add_dependencies(python_tests "run_${name}")

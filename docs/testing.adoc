@@ -52,7 +52,8 @@ add_unit_test(
   my_test
   PYTEST
   FILES my_test.py
-  LIBRARIES my_lib)
+  LIBRARIES my_lib
+  EXTRA_DEPS my_header.hpp)
 ----
 
 `add_unit_test` also supports running tests using https://pytest.org[pytest]. In
@@ -61,6 +62,11 @@ the command line `--include_dirs <paths>`. And the command line options can be
 handled with pytest's
 https://docs.pytest.org/en/8.0.x/reference/reference.html#pytest.hookspec.pytest_addoption[`addoption`
 hook].
+
+NOTE: The `EXTRA_DEPS` argument allows python tests to specify extra
+dependencies that are not part of the CMake dependency tree. A `conftest.py`
+file in the same directory as any of the `FILE`​s is automatically discovered as
+such a dependency.
 
 === Fuzz tests
 
