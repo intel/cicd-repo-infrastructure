@@ -50,10 +50,10 @@ else()
     )
 endif()
 
-function(add_coverage_target name)
+function(add_test_coverage_target name)
     message(
         STATUS
-            "add_coverage_target(${name}) is disabled because CMAKE_CXX_COMPILER_ID is ${CMAKE_CXX_COMPILER_ID}."
+            "add_test_coverage_target(${name}) is disabled because CMAKE_CXX_COMPILER_ID is ${CMAKE_CXX_COMPILER_ID}."
     )
 endfunction()
 
