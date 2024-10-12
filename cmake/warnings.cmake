@@ -28,6 +28,4 @@ target_compile_options(
         -Wshadow
         $<$<CXX_COMPILER_ID:GNU>:-Wuseless-cast>
         -Wunused
-        $<$<CXX_COMPILER_ID:Clang>:-Wmissing-prototypes>
-        # warnings turned off
-        $<$<CXX_COMPILER_ID:Clang>:-Wno-gnu-string-literal-operator-template>)
+        $<$<CXX_COMPILER_ID:Clang>:-Wmissing-prototypes>)
