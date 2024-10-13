@@ -20,12 +20,14 @@ target_compile_options(
         $<$<CXX_COMPILER_ID:Clang>:-Wgcc-compat>
         $<$<CXX_COMPILER_ID:Clang>:-Wheader-hygiene>
         $<$<CXX_COMPILER_ID:Clang>:-Widiomatic-parentheses>
-        $<$<CXX_COMPILER_ID:Clang>:-Wimplicit>
+        $<$<CXX_COMPILER_ID:Clang>:-Wimplicit-fallthrough>
         $<$<CXX_COMPILER_ID:GNU>:-Wlogical-op>
         $<$<CXX_COMPILER_ID:Clang>:-Wnewline-eof>
         -Wold-style-cast
         -Woverloaded-virtual
+        $<$<CXX_COMPILER_ID:Clang>:-Wpedantic>
         -Wshadow
+        $<$<CXX_COMPILER_ID:Clang>:-Wshift-sign-overflow>
         $<$<CXX_COMPILER_ID:GNU>:-Wuseless-cast>
         -Wunused
         $<$<CXX_COMPILER_ID:Clang>:-Wmissing-prototypes>)
