@@ -48,19 +48,6 @@ jobs:
           sudo apt install -y asciidoctor
           sudo gem install asciidoctor asciidoctor-diagram rouge
 
-      - name: Install cmake-format
-        run: |
-          pipx install cmakelang
-          pipx inject cmakelang pyyaml
-
-      - name: Install python quality tools
-        run: |
-          pipx install pytest
-          pipx inject pytest pytest-xdist hypothesis
-          pipx install mypy
-          pipx install black
-          echo "/opt/pipx_bin" >> $GITHUB_PATH
-
       - name: Checkout target branch
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -72,6 +59,21 @@ jobs:
 
       - name: Checkout PR branch
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install python test requirements
+        run: |
+          python3 -m venv ${{github.workspace}}/test_venv
+          source ${{github.workspace}}/test_venv/bin/activate
+          pip install -r ${{github.workspace}}/requirements.txt
+          echo "${{github.workspace}}/test_venv/bin" >> $GITHUB_PATH
+
+      - name: Install cmake-format
+        run: |
+          pip install cmakelang pyyaml
+
+      - name: Install python quality tools
+        run: |
+          pip install mypy black
 
       - name: Restore CPM cache
         env:

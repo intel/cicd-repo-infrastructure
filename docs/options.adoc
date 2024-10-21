@@ -30,6 +30,12 @@ level, and a `toolchains` directory.
 
 When `ON`, this repository provides a `mull.yml` file at the root level.
 
+*`INFRA_PROVIDE_PYTEST_REQS`*
+
+When `ON`, this repository provides a `requirements.txt` file at the root level.
+When used with `pip install -r requirements.txt` this provides the packages
+sufficient to run python tests.
+
 *`INFRA_PROVIDE_GITIGNORE`*
 
 When `ON`, this repository provides a `.gitignore` file at the root level. It

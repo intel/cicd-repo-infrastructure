@@ -26,6 +26,8 @@ option(INFRA_PROVIDE_CLANG_TIDY "Provide .clang-tidy file" ON)
 option(INFRA_PROVIDE_CMAKE_FORMAT "Provide .cmake-format.yaml file" ON)
 option(INFRA_PROVIDE_PRESETS "Provide cmake presets and toolchains" ON)
 option(INFRA_PROVIDE_MULL "Provide mull.yml file" ON)
+option(INFRA_PROVIDE_PYTEST_REQS
+       "Provide pip requirements.txt for python tests" ON)
 option(INFRA_PROVIDE_GITIGNORE "Add provided things to .gitignore" ON)
 option(INFRA_USE_SYMLINKS "Use symlinks to provide common files" ON)
 
