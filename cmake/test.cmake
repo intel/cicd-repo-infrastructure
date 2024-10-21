@@ -245,8 +245,8 @@ function(add_python_test_target name)
         set(include_dirs_arg --include_dirs ${include_dirs})
     endif()
     set(target_test_command
-        env "PYTHONPYCACHEPREFIX=${CMAKE_BINARY_DIR}/__pycache__" pytest
-        --forked -o "cache_dir=${CMAKE_BINARY_DIR}/.pytest_cache"
+        env "PYTHONPYCACHEPREFIX=${CMAKE_BINARY_DIR}/__pycache__" pytest -n
+        auto -o "cache_dir=${CMAKE_BINARY_DIR}/.pytest_cache"
         --rootdir=${CMAKE_SOURCE_DIR} -s ${UNIT_FILES} ${include_files_arg}
         ${include_dirs_arg} ${UNIT_EXTRA_ARGS})
 

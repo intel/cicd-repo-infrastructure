@@ -56,8 +56,7 @@ jobs:
       - name: Install python quality tools
         run: |
           pipx install pytest
-          pipx inject pytest pytest-forked
-          pipx inject pytest hypothesis
+          pipx inject pytest pytest-xdist hypothesis
           pipx install mypy
           pipx install black
           echo "/opt/pipx_bin" >> $GITHUB_PATH
