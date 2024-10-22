@@ -128,3 +128,16 @@ function(clang_tidy_interface)
 
     compute_branch_diff(clang-tidy ".hpp")
 endfunction()
+
+if(NOT TARGET clang-tidy-canary)
+    message(STATUS "Adding clang-tidy-canary target for ${CMAKE_SOURCE_DIR}")
+    add_custom_command(
+        OUTPUT clang_tidy_canary.alive
+        COMMAND ${CLANG_TIDY_PROGRAM} "--verify-config" 2>clang_tidy.log
+        COMMAND "!" "[" "-s" "clang_tidy.log" "]"
+        COMMAND ${CMAKE_COMMAND} "-E" "touch" "clang_tidy_canary.alive"
+        DEPENDS ${CMAKE_SOURCE_DIR}/.clang-tidy)
+    add_custom_target(clang-tidy-canary DEPENDS clang_tidy_canary.alive)
+    add_dependencies(clang-tidy clang-tidy-canary)
+    add_dependencies(clang-tidy-branch-diff clang-tidy-canary)
+endif()
