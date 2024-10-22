@@ -36,6 +36,5 @@ Checks: >
   -readability-uppercase-literal-suffix
 WarningsAsErrors: '*'
 HeaderFilterRegex: ''
-AnalyzeTemporaryDtors: false
 FormatStyle: file
 ...
