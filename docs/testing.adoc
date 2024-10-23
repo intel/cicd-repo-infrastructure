@@ -68,6 +68,10 @@ dependencies that are not part of the CMake dependency tree. A `conftest.py`
 file in the same directory as any of the `FILE`​s is automatically discovered as
 such a dependency.
 
+NOTE: Python tests use several testing packages; these can be installed using
+`requirements.txt` which is provided through the `INFRA_PROVIDE_PYTEST_REQS`
+option.
+
 === Fuzz tests
 
 [source,cmake]
