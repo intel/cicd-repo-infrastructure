@@ -119,6 +119,101 @@ If you are not building with clang, the `clang-tidy` target will do nothing.
 NOTE: As with `clang-format`, for preference, we'll find the `clang-tidy` that
 exists alongside the compiler being used.
 
+=== Enabled clang-tidy checks
+
+The following https://clang.llvm.org/extra/clang-tidy/checks/list.html[`clang-tidy` check] categories are enabled:
+
+* bugprone-*
+* clang-diagnostic-*
+* clang-analyzer-*
+* cppcoreguidelines-*
+* misc-*
+* modernize-*
+* performance-*
+* portability-*
+* readability-*
+
+In addition, the following specific checks are enabled:
+
+* https://clang.llvm.org/extra/clang-tidy/checks/boost/use-to-string.html[boost-use-to-string]
+* https://clang.llvm.org/extra/clang-tidy/checks/google/build-explicit-make-pair.html[google-build-explicit-make-pair]
+* https://clang.llvm.org/extra/clang-tidy/checks/google/build-namespaces.html[google-build-namespaces]
+* https://clang.llvm.org/extra/clang-tidy/checks/google/default-arguments.html[google-default-arguments]
+* https://clang.llvm.org/extra/clang-tidy/checks/google/explicit-constructor.html[google-explicit-constructor]
+* https://clang.llvm.org/extra/clang-tidy/checks/google/readability-casting.html[google-readability-casting]
+* https://clang.llvm.org/extra/clang-tidy/checks/google/runtime-int.html[google-runtime-int]
+* https://clang.llvm.org/extra/clang-tidy/checks/hicpp/signed-bitwise.html[hicpp-signed-bitwise]
+
+The following specific checks are _disabled_ because they are aliases for other
+checks, and clang-tidy does not deduplicate them:
+
+* https://clang.llvm.org/extra/clang-tidy/checks/bugprone/narrowing-conversions.html[bugprone-narrowing-conversions]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/narrowing-conversions.html[cpp-coreguidelines-narrowing-conversions]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/avoid-c-arrays.html[cppcoreguidelines-avoid-c-arrays]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/modernize/avoid-c-arrays.html[modernize-avoid-c-arrays]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/avoid-magic-numbers.html[cppcoreguidelines-avoid-magic-numbers]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/readability/magic-numbers.html[readability-magic-numbers]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/c-copy-assignment-signature.html[cppcoreguidelines-c-copy-assignment-signature]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/misc/unconventional-assign-operator.html[misc-unconventional-assignment-operator]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/explicit-virtual-functions.html[cppcoreguidelines-explicit-virtual-functions]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/modernize/use-override.html[modernize-use-override]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/macro-to-enum.html[cppcoreguidelines-macro-to-enum]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/modernize/macro-to-enum.html[modernize-macro-to-enum]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/noexcept-destructor.html[cppcoreguidelines-noexcept-destructor]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html[performance-noexcept-destructor]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/noexcept-move-operations.html[cppcoreguidelines-noexcept-move-operations]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-move-constructor.html[performance-noexcept-move-constructor]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/noexcept-swap.html[cppcoreguidelines-noexcept-swap]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-swap.html[performance-noexcept-swap]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/non-private-member-variables-in-classes.html[cppcoreguidelines-non-private-member-variables-in-classes]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/misc/non-private-member-variables-in-classes.html[misc-non-private-member-variables-in-classes]
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/use-default-member-init.html[cppcoreguidelines-use-default-member-init]
+  aliases
+  https://clang.llvm.org/extra/clang-tidy/checks/modernize/use-default-member-init.html[modernize-use-default-member-init]
+
+The following checks are disabled for specific reasons:
+
+* https://clang.llvm.org/extra/clang-tidy/checks/bugprone/easily-swappable-parameters.html[bugprone-easily-swappable-parameters] -
+  may be enabled someday, but currently too onerous.
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/avoid-non-const-global-variables.html[cppcoreguidelines-avoid-non-const-global-variables] -
+  the nature of embedded work makes this check ill-conceived.
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/missing-std-forward.html[cppcoreguidelines-missing-std-forward] -
+  this check misdiagnoses some common things.
+* https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/pro-bounds-pointer-arithmetic.html[cppcoreguidelines-pro-bounds-pointer-arithmetic] -
+  may be enabled someday, but currently too onerous.
+* https://clang.llvm.org/extra/clang-tidy/checks/misc/include-cleaner.html[misc-include-cleaner] -
+  warns on omnibus headers.
+* https://clang.llvm.org/extra/clang-tidy/checks/misc/non-private-member-variables-in-classes.html[misc-non-private-member-variables-in-classes] -
+  public variables don't contribute to class invariants.
+* https://clang.llvm.org/extra/clang-tidy/checks/modernize/concat-nested-namespaces.html[modernize-concat-nested-namespaces] -
+  it's a style choice.
+* https://clang.llvm.org/extra/clang-tidy/checks/readability/identifier-length.html[readability-identifier-length] -
+  generic code uses lots of short identifiers.
+* https://clang.llvm.org/extra/clang-tidy/checks/readability/identifier-naming.html[readability-identifier-naming] -
+  one of the most expensive checks; not worth the cost.
+* https://clang.llvm.org/extra/clang-tidy/checks/readability/magic-numbers.html[readability-magic-numbers] -
+  the nature of embedded work makes this too onerous.
+* https://clang.llvm.org/extra/clang-tidy/checks/readability/named-parameter.html[readability-named-parameter] -
+  it's a style choice.
+* https://clang.llvm.org/extra/clang-tidy/checks/readability/qualified-auto.html[readability-qualified-auto] -
+  it's a style choice.
+* https://clang.llvm.org/extra/clang-tidy/checks/readability/redundant-inline-specifier.html[readability-redundant-inline-specifier] -
+  `inline` is mostly, but not _only_ for the linker.
+* https://clang.llvm.org/extra/clang-tidy/checks/readability/uppercase-literal-suffix.html[readability-uppercase-literal-suffix] -
+  it's a style choice.
+
+It is likely in the future that more clang-tidy checks will be enabled.
+
 === `mypy`
 
 Python linting is available using https://mypy-lang.org/[`mypy`]. To lint python
