@@ -30,4 +30,6 @@ target_compile_options(
         $<$<CXX_COMPILER_ID:Clang>:-Wshift-sign-overflow>
         $<$<CXX_COMPILER_ID:GNU>:-Wuseless-cast>
         -Wunused
-        $<$<CXX_COMPILER_ID:Clang>:-Wmissing-prototypes>)
+        $<$<CXX_COMPILER_ID:Clang>:-Wmissing-prototypes>
+        $<$<CXX_COMPILER_ID:AppleClang>:-Wno-missing-braces>)
+        
