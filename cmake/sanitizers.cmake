@@ -1,7 +1,9 @@
 add_library(${INFRA_TARGET_NAMESPACE}sanitizers INTERFACE)
 
 if(DEFINED ENV{SANITIZERS})
-    set(SANITIZERS $ENV{SANITIZERS})
+    set(SANITIZERS
+        $ENV{SANITIZERS}
+        CACHE STRING "Sanitizer options")
 endif()
 
 if(SANITIZERS)
