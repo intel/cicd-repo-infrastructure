@@ -7,7 +7,7 @@ approval-utilities==19.1.1
 approvaltests==19.1.1
 ast-serialize==0.5.0
 beautifulsoup4==4.15.0
-black==26.5.1
+black==26.10.1
 certifi==2026.7.22
 charset-normalizer==3.5.1
 clang-format==22.1.5
