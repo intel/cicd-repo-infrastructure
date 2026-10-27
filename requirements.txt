@@ -9,7 +9,7 @@ ast-serialize==0.5.0
 beautifulsoup4==4.15.0
 black==26.10.1
 certifi==2026.10.19
-charset-normalizer==3.5.1
+charset-normalizer==3.5.2
 clang-format==22.1.5
 click==8.4.1
 cmakelang==0.6.13
