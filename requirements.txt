@@ -18,7 +18,7 @@ execnet==2.1.2
 hypothesis==6.155.2
 idna==3.19
 iniconfig==2.3.0
-librt==0.11.0
+librt==0.16.0
 mock==5.2.0
 mypy==2.1.0
 mypy-extensions==1.1.0
