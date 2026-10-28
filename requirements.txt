@@ -38,7 +38,7 @@ requests==2.34.2
 ruff==0.15.17
 six==1.17.0
 sortedcontainers==2.4.0
-soupsieve==2.9.2
+soupsieve==3.0.4
 testfixtures==11.0.0
 typing-extensions==4.15.0
 urllib3==2.8.0
