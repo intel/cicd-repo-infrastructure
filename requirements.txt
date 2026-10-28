@@ -3,7 +3,7 @@
 # This is a mirror of the current provisions of `uv sync`.
 #
 allpairspy==2.5.1
-approval-utilities==19.1.1
+approval-utilities==20.0.0
 approvaltests==19.1.1
 ast-serialize==0.5.0
 beautifulsoup4==4.15.0
