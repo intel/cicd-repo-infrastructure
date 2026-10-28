@@ -25,8 +25,6 @@ option(INFRA_PROVIDE_CLANG_TIDY "Provide .clang-tidy file" ON)
 option(INFRA_PROVIDE_CMAKE_FORMAT "Provide .cmake-format.yaml file" ON)
 option(INFRA_PROVIDE_PRESETS "Provide cmake presets and toolchains" ON)
 option(INFRA_PROVIDE_MULL "Provide mull.yml file" ON)
-option(INFRA_PROVIDE_PYTEST_REQS
-       "Provide pip requirements.txt for python tests" ON)
 option(
     INFRA_PROVIDE_PUPPETEER_CONFIG
     "Provide puppeteer_config.json for generating mermaid diagrams in documentation"
@@ -44,7 +42,6 @@ if(${PROJECT_SOURCE_DIR}/cmake STREQUAL CMAKE_CURRENT_LIST_DIR)
     set(INFRA_PROVIDE_CMAKE_FORMAT OFF)
     set(INFRA_PROVIDE_PRESETS OFF)
     set(INFRA_PROVIDE_MULL OFF)
-    set(INFRA_PROVIDE_PYTEST_REQS OFF)
     set(INFRA_PROVIDE_PUPPETEER_CONFIG OFF)
     set(INFRA_PROVIDE_MERMAID_CONFIG OFF)
     set(INFRA_PROVIDE_GITIGNORE OFF)

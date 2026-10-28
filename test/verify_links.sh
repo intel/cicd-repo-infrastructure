@@ -4,7 +4,7 @@ set -euo pipefail
 
 echo "Verifying links in "`pwd`
 
-links=( .clang-format .clang-tidy .cmake-format.yaml CMakePresets.json docs/puppeteer_config.json mull.yml requirements.txt toolchains )
+links=( .clang-format .clang-tidy .cmake-format.yaml CMakePresets.json docs/puppeteer_config.json mull.yml toolchains )
 for l in "${links[@]}"
 do
     if ! [[ -L "application/${l}" ]]; then
