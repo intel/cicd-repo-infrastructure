@@ -9,7 +9,6 @@ rm -f mull.yml
 rm -f .gitignore
 rm -f CMakePresets.json
 rm -f toolchains
-rm -f requirements.txt
 
 rm -rf docs
 rm -rf build

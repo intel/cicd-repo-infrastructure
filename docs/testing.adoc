@@ -68,9 +68,8 @@ dependencies that are not part of the CMake dependency tree. A `conftest.py`
 file in the same directory as any of the `FILE`​s is automatically discovered as
 such a dependency.
 
-NOTE: Python tests use several testing packages; these can be installed using (the preferred method) `uv`
-or (the older method) `pip` with `requirements.txt` which is provided through the `INFRA_PROVIDE_PYTEST_REQS`
-option.
+NOTE: Python tests use several testing packages; these can be installed
+transitively using `uv` by depending on the `intel-cicd-repo-infrastructure` package.
 
 Example `pyproject.toml` snippet showing dependency on this repo package:
 [source,toml]
@@ -83,6 +82,10 @@ dependencies = [
 [tool.uv.sources]
 intel-cicd-repo-infrastructure = { git = "https://github.com/intel/cicd-repo-infrastructure", branch = "dev" }
 ----
+
+See also
+https://github.com/intel/compile-time-init-build/blob/main/pyproject.toml[CIB's
+`pyproject.toml` file] as an example.
 
 === Approval tests
 
